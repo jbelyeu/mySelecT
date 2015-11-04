@@ -72,7 +72,7 @@ public class StatsCalc {
 		
 		parser.addArgument("sim_dir").type(Arguments.fileType().verifyIsDirectory()
                 .verifyCanRead()).help("Directory where simulations are saved");
-		
+		//TODO: hardcoded chromosome number
 		parser.addArgument("chr").type(Integer.class).choices(Arguments.range(1, 22))
 				.help("Chromosome number");
 		
@@ -104,9 +104,10 @@ public class StatsCalc {
 		HashMap<String, Object> parsedArgs = new HashMap<String, Object>();
 		
 		//Checking to make sure input is correct
-		try {parser.parseArgs(args, parsedArgs);}
-		catch (HelpScreenException e)
-		{
+		try {
+			parser.parseArgs(args, parsedArgs);
+		}
+		catch (HelpScreenException e) {
 			//this shows up as an ArgumentParserException, so we catch it here to avoid a stack trace output
 			System.exit(0);
 		}
@@ -127,21 +128,25 @@ public class StatsCalc {
 		String[] sim_files = sim_dir.list();
 		boolean contains_neut = false;
 		boolean contains_sel = false;
-		for(int i = 0; i < sim_files.length; i++) {
-			if(sim_files[i].equals("neutral_simulation.tsv"))
+		for (int i = 0; i < sim_files.length; i++) {
+			if (sim_files[i].equals("neutral_simulation.tsv")) {
 				contains_neut= true;
-			if(sim_files[i].equals("selection_simulation.tsv"))
+			}
+			if (sim_files[i].equals("selection_simulation.tsv")) {
 				contains_sel = true;
+			}
 		}
 		
-		if(!contains_neut || !contains_sel) {
+		if (!contains_neut || !contains_sel) {
 			
 			System.out.println("Fatal error in argument parsing: see log");
 			System.out.println("Could not find required simulations");
 			
 			Log err_log = new Log(Log.type.stat);
 			err_log.addLine("Error: Could not find specific simulations for analysis");
+			//TODO: What API is this referring to? We should either make such a thing or change the message.
 			err_log.addLine("\t*Go to api for more information or run with -h as first parameter for help");
+			//TODO: This error is a little misleading, I think. I believe the "step" referred to is this window only. Need to check.
 			err_log.addLine("\t*You will need to redo this entire step--all new data is invalid");
 			
 			System.exit(0);
@@ -179,8 +184,6 @@ public class StatsCalc {
 	private XPEHH x;
 	private dDAF d;
 	private Fst f;
-	//private TajD t;
-	//private NewStat new;
 	
 	private Log log;
 	
@@ -219,7 +222,7 @@ public class StatsCalc {
 			win_stats_file.createNewFile();
 			
 			PrintWriter pw = new PrintWriter(win_stats_file);
-			pw.print("snp_id\tposition\tiHS\tXPEHH\tiHH\tdDAF\tDAF\tFst"//\tTajD\tNew
+			pw.print("snp_id\tposition\tiHS\tXPEHH\tiHH\tdDAF\tDAF\tFst"
 					+ "\tunstd_PoP\tunstd_MoP\twin_PoP\twin_MoP\n");
 			
 			pw.print(ws);
@@ -244,8 +247,6 @@ public class StatsCalc {
 		ws.setDDAF(d.getStats(), d.getSNPs());
 		ws.setDAF(d.getDafStats(), d.getSNPs());
 		ws.setFST(f.getStats(), f.getSNPs());
-		//ws.setTAJD(t.getStats(), t.getSNPs());
-		//ws.setNEW(new.getStats(), new.getSNPs());
 		
 		calcCompositeScores();
 		
@@ -267,7 +268,7 @@ public class StatsCalc {
 		Double[] score_probs = new Double[NUM_TESTS];
 		
 		List<SNP> all_snps = ws.getAllSNPs();
-		for(int j = 0; j < all_snps.size(); j++) {
+		for (int j = 0; j < all_snps.size(); j++) {
 			
 			SNP s = all_snps.get(j);
 			
@@ -286,11 +287,13 @@ public class StatsCalc {
 		
 		Double prod_score = 1.0;
 		
-		for(int i = 0; i < score_probs.length; i++) {
-			if(score_probs[i] != null && ws.getDafScore(s) >= daf_cutoff)
+		for (int i = 0; i < score_probs.length; i++) {
+			if (score_probs[i] != null && ws.getDafScore(s) >= daf_cutoff) {
 				prod_score = prod_score*score_probs[i];
-			else
+			}
+			else {
 				return Double.NaN;
+			}
 		}
 		
 		return prod_score;
@@ -300,13 +303,14 @@ public class StatsCalc {
 		
 		int tot_tests = score_probs.length;
 		Double score = 0.0;
-		for(int i = 0; i < score_probs.length; i++) {
+		for (int i = 0; i < score_probs.length; i++) {
 			
-			if(score_probs[i] != null 
-					&& (daf_cutoff == 0.0 || ws.getDafScore(s) >= daf_cutoff))
+			if (score_probs[i] != null && (daf_cutoff == 0.0 || ws.getDafScore(s) >= daf_cutoff)) {
 				score += score_probs[i];
-			else
+			}
+			else {
 				tot_tests--;
+			}
 		}
 		
 		return score / tot_tests;
@@ -340,14 +344,6 @@ public class StatsCalc {
 			Thread.sleep(WAIT_TIME);
 			f_thrd.start();
 			
-			//StatsThread t_thrd = new StatsThread(t, lock);
-			//Thread.sleep(WAIT_TIME);
-			//t_thrd.start();
-			
-			//StatsThread new_thrd = new StatsThread(new, lock);
-			//Thread.sleep(WAIT_TIME);
-			//new_thrd.start();
-			
 			synchronize(i_thrd, h_thrd, x_thrd, d_thrd, f_thrd);//add t_thrd
 			
 			i = (iHS) i_thrd.getTest();
@@ -355,8 +351,6 @@ public class StatsCalc {
 			x = (XPEHH) x_thrd.getTest();
 			d = (dDAF) d_thrd.getTest();
 			f = (Fst) f_thrd.getTest();
-			//t = (TajD) t_thrd.getTest();
-			//new = (NewStat) new_thrd.getTest();
 		
 		} catch (InterruptedException e) { 
 			e.printStackTrace();
@@ -372,14 +366,14 @@ public class StatsCalc {
 								StatsThread f_thrd) {
 
 		for(;;) {
-			if(i_thrd.isFinished()
-					&& h_thrd.isFinished()
-					&& x_thrd.isFinished()
-					&& d_thrd.isFinished()
-					&& f_thrd.isFinished())
+			if (i_thrd.isFinished() && h_thrd.isFinished() &&
+					x_thrd.isFinished() && d_thrd.isFinished()	&& 
+					f_thrd.isFinished()) {
 				break;
-			else
+			}
+			else {
 				continue;
+			}
 		}
 	}
 	
@@ -454,9 +448,6 @@ public class StatsCalc {
 					neut_sim_arr[SimDist.FST_TYPE], sel_sim_arr[SimDist.FST_TYPE],
 					deflt_prior, prior_prob);
 			
-			//t = new TajD(args0, args1, ..., argsx);
-			//new = new NewStat(args0, args1, ..., argsx);
-			
 		} catch (IOException e) {
 			e.printStackTrace();
 			log.addLine(win_num + "\tReadFileError\tCould not find the correct file for proper loading of envi; check chr num and api\t" + e.getMessage());
@@ -480,7 +471,7 @@ public class StatsCalc {
 	private Object getObject(String path) throws IOException, ClassNotFoundException {
 		
 		File file = new File(path);
-		if(!file.exists()) {
+		if (!file.exists()) {
 			throw new IOException();
 		}
 		
@@ -491,13 +482,14 @@ public class StatsCalc {
 	private String getTargetXCrossWindowFileName() throws IOException {
 		
 		String[] all_files = win_dir.list();
-		for(int i = 0; i < all_files.length; i++) {
+		for (int i = 0; i < all_files.length; i++) {
 			
 			String file_name = all_files[i];
-			if(file_name.contains("chr" + chr)
+			if (file_name.contains("chr" + chr)
 					&& file_name.contains("win" + win_num + "_")
-					&& file_name.contains("x"))
+					&& file_name.contains("x")) {
 				return win_dir.getAbsolutePath() + File.separator + file_name;
+			}
 		}
 		
 		throw new IOException();
@@ -506,13 +498,14 @@ public class StatsCalc {
 	private String getTargetWindowFileName() throws IOException {
 		
 		String[] all_files = win_dir.list();
-		for(int i = 0; i < all_files.length; i++) {
+		for (int i = 0; i < all_files.length; i++) {
 			
 			String file_name = all_files[i];
-			if(file_name.contains("chr" + chr)
+			if (file_name.contains("chr" + chr)
 					&& file_name.contains("win" + win_num)
-					&& !file_name.contains("x")) 
+					&& !file_name.contains("x")) {
 				return win_dir.getAbsolutePath() + File.separator + file_name;
+			}
 		}
 		
 		throw new IOException();
@@ -525,19 +518,19 @@ public class StatsCalc {
 	private void setupFiles() {
 		
 		envi_dir = new File(wrk_dir.getAbsoluteFile() + File.separator + "envi_files" + File.separator + "envi_var");
-		if(!envi_dir.exists() && !envi_dir.isDirectory()) {
+		if (!envi_dir.exists() && !envi_dir.isDirectory()) {
 			log.addLine(win_num + "\tEnviDirError\tCould not find the evironment directory; check api for path names");
 			System.exit(0);
 		}
 		
 		win_dir = new File(wrk_dir.getAbsoluteFile() + File.separator + "envi_files" + File.separator + "all_wins");
-		if(!win_dir.exists() && !win_dir.isDirectory()) {
+		if (!win_dir.exists() && !win_dir.isDirectory()) {
 			log.addLine(win_num + "\tWindowDirError\tCould not find the windows directory; check api for path names");
 			System.exit(0);
 		}
 		
 		wrk_dir = new File(wrk_dir.getAbsolutePath() + File.separator + "stats_files");
-		if(!wrk_dir.exists())
+		if (!wrk_dir.exists())
 			wrk_dir.mkdirs();
 	}
 	
@@ -552,17 +545,18 @@ public class StatsCalc {
 		ihs_abs = (Boolean) args.get("nonabs_ihs");
 		
 		prior_prob = (Double) args.get("prior_prob");
-		if(prior_prob == -1.0) 
+		if (prior_prob == -1.0) {
 			deflt_prior = true;
-		else
+		}
+		else {
 			deflt_prior = false;
+		}
 	}
 }
 
 class StatsThread extends Thread {
 
-	private final Object lock;
-	
+	private final Object lock;	
 	private int win_num;
 	
 	private Log log;
@@ -581,7 +575,6 @@ class StatsThread extends Thread {
 		finished = false;
 		
 		thrd = new Thread(this);
-//		thrd.start();
 	}
 	
 	public void start() {

@@ -36,22 +36,21 @@ public class SimulationParser {
 		
 		SimDist[] dists = createDistributions();
 		
-		try {
-			Scanner scan = new Scanner(new File(file_path));
+		try (Scanner scan = new Scanner(new File(file_path))) {
 			scan.nextLine();//skip header line
 			
 			while(scan.hasNext()) {
 				
 				String[] vals = scan.nextLine().split("\\s+");
 				
-				if(vals.length != NUM_TESTS) {
+				if (vals.length != NUM_TESTS) {
 					String err_type = "NumTestError\tIrregularities in number of simulated data columns";
 					throw new StatsCalcException(err_type);
 				}
 				
 				//This function depends a lot on the way the sim file is set up
 				//AND the SimDist type values (it was engineered this way)
-				for(int i = 0; i < NUM_TESTS; i++) {
+				for (int i = 0; i < NUM_TESTS; i++) {
 					double val = Double.parseDouble(vals[i]);
 					dists[i].addSimValue(val);
 				}
@@ -92,9 +91,9 @@ public class SimulationParser {
 	@SuppressWarnings("unused")
 	private void printSimDistArr(SimDist[] dists) {
 		
-		for(int i = 0; i < NUM_TESTS; i++) {
+		for (int i = 0; i < NUM_TESTS; i++) {
 			List<Double> vals = dists[i].getSimVals();
-			for(int j = 0; j < vals.size(); j++)
+			for (int j = 0; j < vals.size(); j++)
 				System.out.print(vals.get(j) + "  ");
 			
 			System.out.println();
