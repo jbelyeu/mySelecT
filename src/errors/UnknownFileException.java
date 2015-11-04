@@ -12,6 +12,7 @@ public class UnknownFileException extends Exception {
 		log.addLine("There is an error with reading files from " 
 				+ dir.getAbsolutePath());
 		log.addLine("\t*check that you have the correct flags in your file names");
+		//TODO: There's that API reference again...
 		log.addLine("\t*and go to api for parameter descriptions");
 	}
 	
@@ -20,6 +21,7 @@ public class UnknownFileException extends Exception {
 				+ dir.getAbsolutePath());
 		log.addLine("\t*" + msg);
 		log.addLine("\t*check that you have the correct flags in your file names");
+		//TODO: And again
 		log.addLine("\t*and go to api for parameter descriptions");
 	}
 }

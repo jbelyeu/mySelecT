@@ -11,6 +11,7 @@ public class FileParsingException extends Exception {
 		log.addLine("\n");
 		log.addLine(message);
 		log.addLine("\t*Problem with file structure or file formatting" );
+		//TODO: API!!!
 		log.addLine("\t*Go to api for more information");
 	}
 }
