@@ -33,8 +33,7 @@ public class AncestralParser {
 		this.anc_path = anc_path;
 		this.log = log;
 		
-		skip_first_line = false;
-		
+		skip_first_line = false;		
 		try {
 			anc_scan = new Scanner(new File(anc_path));
 		} catch (FileNotFoundException e) {
@@ -258,9 +257,7 @@ public class AncestralParser {
 	
 	private void checkLegendFile() throws FileParsingException {
 		
-		Scanner temp_scan = null;
-		try {
-			temp_scan = new Scanner(new File(anc_path));
+		try (Scanner temp_scan = new Scanner(new File(anc_path));) {
 			
 			//to check the first line; to skip or not to skip, that is the question
 			String first_line = temp_scan.nextLine();
