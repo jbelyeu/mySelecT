@@ -64,7 +64,7 @@ public class SetupDriver {
 	private Individual[] op_inx_indv;
 	
 	//universal variables
-	private GeneticMap gm;
+	private GeneticMap genMap;
 	private List<Window> anc_types;
 	
 	//progress log
@@ -79,7 +79,7 @@ public class SetupDriver {
 	
 	public void runSetup() throws Exception {
 		
-		for(int i = chr_st; i <= chr_end; i++) {
+		for (int i = chr_st; i <= chr_end; i++) {
 			
 			parseFiles(i);	
 			intersectPopulations();
@@ -138,7 +138,7 @@ public class SetupDriver {
 			File var_dir = new File(wrk_dir.getAbsolutePath() + File.separator + "envi_var");
 			var_dir.mkdirs();
 			
-			if(var_dir.isDirectory()) {
+			if (var_dir.isDirectory()) {
 				String path = "";
 				
 				path = var_dir.getAbsoluteFile() + File.separator + "target_pop_wins.bin";
@@ -169,7 +169,7 @@ public class SetupDriver {
 				writeObj(path, anc_types);
 				
 				path = var_dir.getAbsoluteFile() + File.separator + "genetic_map.bin";
-				writeObj(path, gm);
+				writeObj(path, genMap);
 			}
 			else {
 				String msg = "Could not create directory for environment variables; check output directory path";
@@ -199,7 +199,7 @@ public class SetupDriver {
 	
 	private void intersectPopulations() {
 		
-		if(run_intersect) {
+		if (run_intersect) {
 			System.out.println("Running Intersections");
 			log.add("\nRunning Intersections....");
 			
@@ -236,10 +236,12 @@ public class SetupDriver {
 		log.addLine("\nLoading referenced data into memory for chromosome " + chr);
 		System.out.println("Loading Data");
 		
-		if(containsVCF(data_dir))
+		if (containsVCF(data_dir)){
 			runVcfParcers(chr);
-		else
+		}
+		else {
 			runHapsLegendParcers(chr);
+		}
 	}
 	
 	private void runHapsLegendParcers(int chr) throws Exception {
@@ -257,8 +259,9 @@ public class SetupDriver {
 		String anc_path = getAncestralPath(data_dir, chr);
 		String map_path = getMapPath(map_dir, chr);
 		
-		if(lg_tp_path.equals(lg_xp_path) && lg_tp_path.equals(lg_op_path))
+		if (lg_tp_path.equals(lg_xp_path) && lg_tp_path.equals(lg_op_path)) {
 			run_intersect = false;
+		}
 		
 		//=======Instantiate Parsers==========
 		PhasedParser tp_pp = new PhasedParser(lg_tp_path, ph_tp_path, log);
@@ -267,8 +270,9 @@ public class SetupDriver {
 		MapParser mp = new MapParser(map_path, log);
 		
 		AncestralParser ap = null;
-		if(!anc_path.equals(".:MISSING:."))
+		if (!anc_path.equals(".:MISSING:.")) {
 			ap = new AncestralParser(anc_path, chr, log);
+		}
 		
 		//========Import Phased Data===========
 		tp_wins = tp_pp.parseLegend(win_size);
@@ -281,11 +285,13 @@ public class SetupDriver {
 		op_indv = op_pp.parsePhased(chr);
 		
 		//=======Import Environment Data========
-		gm = mp.parseGeneMap();
-		if(!anc_path.equals(".:MISSING:."))
+		genMap = mp.parseGeneMap();
+		if (!anc_path.equals(".:MISSING:.")){
 			anc_types = ap.parseAncestralTypes();
-		else
+		}
+		else {
 			anc_types = new ArrayList<Window>();
+		}
 	}
 	
 	private void runVcfParcers(int chr) throws Exception {
@@ -316,7 +322,7 @@ public class SetupDriver {
 		MapParser mp = new MapParser(map_path, log);
 		
 		//=======Import Environment Data========
-		gm = mp.parseGeneMap();
+		genMap = mp.parseGeneMap();
 		anc_types = tp_vp.getAncestralTypes();
 	}
 	
@@ -326,11 +332,11 @@ public class SetupDriver {
 		String chr_check = "chr" + chr;
 		
 		String[] all_files = dir.list();
-		for(int i = 0; i < all_files.length; i++) {
+		for (int i = 0; i < all_files.length; i++) {
 			
 			String file_name = all_files[i];
 			
-			if(file_name.contains(type)
+			if (file_name.contains(type)
 					&& file_name.contains(chr_check)
 					&& file_name.contains(pop)
 					&& file_name.charAt(0) != '.') {
@@ -347,38 +353,35 @@ public class SetupDriver {
 		String chr_check = "chr" + chr + "_";
 		
 		String[] all_files = dir.list();
-		for(int i = 0; i < all_files.length; i++) {
+		for (int i = 0; i < all_files.length; i++) {
 			
 			String file_name = all_files[i];
-			if(file_name.contains(LEGEND_TYPE) 
+			if (file_name.contains(LEGEND_TYPE) 
 					&& file_name.contains(chr_check)
 					&& file_name.charAt(0) != '.'
 					&& file_name.contains(ANCESTRAL_TYPE))
 				return dir.getAbsolutePath() + File.separator + file_name;
-			if(file_name.contains(EMF_TYPE) 
+			if (file_name.contains(EMF_TYPE) 
 					&& file_name.contains(chr_check)
 					&& file_name.charAt(0) != '.')
 				return dir.getAbsolutePath() + File.separator + file_name;
 		}
 		
 		return ".:MISSING:.";
-//		String msg = "the issue is with your ancestral data";
-//		throw new UnknownFileException(log, dir, msg);
 	}
 	
-	private String getMapPath(File dir, int chr) 
-			throws UnknownFileException {
+	private String getMapPath(File dir, int chr) throws UnknownFileException {
 		
 		String chr_check = "chr" + chr + "_";
 		
 		String[] all_files = dir.list();
 		
-		for(int i = 0; i < all_files.length; i++) {
+		for (int i = 0; i < all_files.length; i++) {
 			
 			String file_name = all_files[i];
-			if(file_name.contains(chr_check)
-					&& file_name.charAt(0) != '.')
+			if (file_name.contains(chr_check) && file_name.charAt(0) != '.') {
 				return dir.getAbsolutePath() + File.separator + file_name;
+			}
 		}
 		
 		String msg = "the issue is with your map data";
@@ -388,9 +391,10 @@ public class SetupDriver {
 	private boolean containsVCF(File dir) {
 		String[] all_files = dir.list();
 		
-		for(int i = 0; i < all_files.length; i++) {
-			if(all_files[i].contains(VCF_TYPE))
+		for (int i = 0; i < all_files.length; i++) {
+			if (all_files[i].contains(VCF_TYPE)) {
 				return true;
+			}
 		}
 		
 		return false;
@@ -408,7 +412,7 @@ public class SetupDriver {
 
         File temp_wrk_dir = new File(args.get("working_dir") + File.separator + "SelecT_workspace" + File.separator);
         int n = 1;
-        while(temp_wrk_dir.exists()) {
+        while (temp_wrk_dir.exists()) {
                 temp_wrk_dir = new File(args.get("working_dir") + File.separator + "SelecT_workspace" + n + File.separator);
                 n++;
         }   
@@ -436,7 +440,6 @@ public class SetupDriver {
 
         log.addLine(" complete!");
         System.out.println("Paramater Check Complete!");
-        System.out.println("I'm praying your analysis works too...");
     }   
 
     private int getWindowSize(Double in) throws IllegalInputException {
@@ -448,7 +451,8 @@ public class SetupDriver {
 
                 in_size = (int) win_size_in;
 
-        } catch (NumberFormatException e) {
+        } 
+        catch (NumberFormatException e) {
                 String msg = "Error: Window size invalid format";
                 throw new IllegalInputException(log, msg);
         }   

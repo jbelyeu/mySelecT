@@ -31,40 +31,45 @@ public class PopIntersector {
 	}
 
 	public void intersectCrossWithTargetPopulations(List<Window> tp_wins, 
-													List<Window> xp_wins, 
-													Individual[] tp_indv,
-													Individual[] xp_indv) {
+												List<Window> xp_wins,
+												Individual[] tp_indv, 
+												Individual[] xp_indv) {
 		
 		Individual[] xp_indv_insect = new Individual[xp_indv.length];
 		Individual[] tp_indv_insect = new Individual[tp_indv.length];
 		
-		for(int i = 0; i < xp_indv_insect.length; i++)
+		for (int i = 0; i < xp_indv_insect.length; i++) {
 			xp_indv_insect[i] = new Individual(xp_indv[i].getID(), xp_indv[i].getChr());
-		for(int i = 0; i < tp_indv_insect.length; i++)
+		}
+		for (int i = 0; i < tp_indv_insect.length; i++){
 			tp_indv_insect[i] = new Individual(tp_indv[i].getID(), tp_indv[i].getChr());
+		}
 		
 		List<Window> wins_insect = new ArrayList<Window>();
 		
 		compareWindows(wins_insect, xp_wins, xp_indv, xp_indv_insect, tp_wins, tp_indv, tp_indv_insect);
 
+		//TODO: WHy insects? Am I missing something? There are a lot of them in this file.
 		//set the global variables
 		txin_wins = wins_insect;
 		xp_int_indv = xp_indv_insect;
 		tp_inx_indv = tp_indv_insect;
 	}
 	
-	public void intersectCrossWithOutgroupPopulations(List<Window> op_wins, 
-														List<Window> xp_wins, 
-														Individual[] op_indv,
-														Individual[] xp_indv) {
+	public void intersectCrossWithOutgroupPopulations(List<Window> op_wins,
+													List<Window> xp_wins, 
+													Individual[] op_indv,	
+													Individual[] xp_indv) {
 		
 		Individual[] xp_indv_insect = new Individual[xp_indv.length];
 		Individual[] op_indv_insect = new Individual[op_indv.length];
 		
-		for(int i = 0; i < xp_indv_insect.length; i++)
+		for (int i = 0; i < xp_indv_insect.length; i++) {
 			xp_indv_insect[i] = new Individual(xp_indv[i].getID(), xp_indv[i].getChr());
-		for(int i = 0; i < op_indv_insect.length; i++)
+		}
+		for (int i = 0; i < op_indv_insect.length; i++) {
 			op_indv_insect[i] = new Individual(op_indv[i].getID(), op_indv[i].getChr());
+		}
 		
 		List<Window> wins_insect = new ArrayList<Window>();
 		
@@ -100,18 +105,18 @@ public class PopIntersector {
 		return op_inx_indv;
 	}
 
-	private void compareWindows(List<Window> wins_insect,
-								List<Window> p1_wins,
+	private void compareWindows(List<Window> wins_insect, 
+								List<Window> p1_wins,	
 								Individual[] p1_indv,
-								Individual[] p1_indv_insect,
-								List<Window> p2_wins,
-								Individual[] p2_indv,
+								Individual[] p1_indv_insect, 
+								List<Window> p2_wins, 
+								Individual[] p2_indv, 
 								Individual[] p2_indv_insect) {
 
 		wins_insect.add(new Window(0, 0, 0));//to initialize the comparator list
 
-		for(int i = 0; i < p1_wins.size(); i++) {
-			for(int j = 0; j < p2_wins.size(); j++) {
+		for (int i = 0; i < p1_wins.size(); i++) {
+			for (int j = 0; j < p2_wins.size(); j++) {
 				Window p1_win = p1_wins.get(i);
 				Window p2_win = p2_wins.get(j);
 
@@ -120,7 +125,7 @@ public class PopIntersector {
 				int p2_win_st = p2_win.getStPos();
 				int p2_win_end = p2_win.getEndPos();
 
-				if(p1_win_st == p2_win_st
+				if (p1_win_st == p2_win_st
 						&& p1_win_end == p2_win_end) {			
 
 					List<SNP> p1_win_snps = p1_wins.get(i).getSNPs();
@@ -156,10 +161,10 @@ public class PopIntersector {
 								Individual[] p1_indv_insect,
 								Individual[] p2_indv_insect) {
 
-		for(int k = 0; k < p1_win_snps.size(); k++) {
-			for(int l = 0; l < p2_win_snps.size(); l++) {
-				if(p1_win_snps.get(k).sameAs(p2_win_snps.get(l))) { 
-					if(!containsWindow(wins_insect, p1_win_st, p1_win_end)) {
+		for (int k = 0; k < p1_win_snps.size(); k++) {
+			for (int l = 0; l < p2_win_snps.size(); l++) {
+				if (p1_win_snps.get(k).sameAs(p2_win_snps.get(l))) { 
+					if (!containsWindow(wins_insect, p1_win_st, p1_win_end)) {
 	
 						//make and put a new window window in wins_insect
 						Window last_win = wins_insect.get(wins_insect.size() - 1);
@@ -208,7 +213,7 @@ public class PopIntersector {
 											Individual[] p2_indv_insect) {
 
 		//Adding alleles to p1 population's individuals
-		for(int m = 0; m < p1_indv_insect.length; m++) {
+		for (int m = 0; m < p1_indv_insect.length; m++) {
 			Integer str_1 = p1_indv[m].getStrand1Allele(p1_indx);
 			Integer str_2 = p1_indv[m].getStrand2Allele(p1_indx);
 
@@ -217,23 +222,27 @@ public class PopIntersector {
 		}
 
 		//Adding alleles to p2 population's individuals
-		for(int i = 0; i < p2_indv_insect.length; i++) {
+		for (int i = 0; i < p2_indv_insect.length; i++) {
 
 			Integer str_1 = p2_indv[i].getStrand1Allele(p2_indx);
 			Integer str_2 = p2_indv[i].getStrand2Allele(p2_indx);
 
 			//switch allele types because they are reported on opposite a0 or a1 column
-			if(p1_snp.getAllele0().equals(p2_snp.getAllele1())) {
+			if (p1_snp.getAllele0().equals(p2_snp.getAllele1())) {
 
-				if(str_1 == 0)
+				if (str_1 == 0) {
 					str_1 = 1;
-				else
+				}
+				else {
 					str_1 = 0;
+				}
 
-				if(str_2 == 0)
+				if (str_2 == 0){
 					str_2 = 1;
-				else
+				}
+				else {
 					str_2 = 0;
+				}
 			}
 
 			p2_indv_insect[i].addAlleleToStrand1(str_1.toString());
@@ -243,9 +252,10 @@ public class PopIntersector {
 	
 	private Window getCurWindow(List<Window> wins, int st, int end) {
 		
-		for(Window w : wins) {
-			if(w.getStPos() == st && w.getEndPos() == end) 
+		for (Window w : wins) {
+			if(w.getStPos() == st && w.getEndPos() == end) {
 				return w;
+			}
 		}
 		
 		return null;
@@ -254,9 +264,10 @@ public class PopIntersector {
 	private boolean containsWindow(List<Window> wins, int st, int end) {
 		
 		
-		for(Window w : wins) {
-			if(w.getStPos() == st && w.getEndPos() == end)
+		for (Window w : wins) {
+			if (w.getStPos() == st && w.getEndPos() == end) {
 				return true;
+			}
 		}
 		
 		return false;

@@ -72,23 +72,24 @@ public class EnviSetup {
 
     	parser.addArgument("map_dir").type(Arguments.fileType().verifyIsDirectory()
                     .verifyCanRead()).help("Directory with map file");
-
+    	//TODO: Don't hardcode the number
     	parser.addArgument("start_chr").type(Integer.class).choices(Arguments.range(1, 22))
     				.help("Starting chromosome number");
-
+    	//TODO: Still don't hardcode the number
     	parser.addArgument("end_chr").type(Integer.class).choices(Arguments.range(1, 22))
     				.help("Ending chromosome number. "
     						+ "Must be equal to or greater than starting chromosome number.");
-
+    	//TODO: Don't hardcode the population name, either
     	parser.addArgument("target_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS", "CLM",
                     "ESN", "ESN", "FIN", "GBR", "GIH","GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL",
                     "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "TST", "YRI").help("Target population");
-
+    	//TODO: I mean it. Don't hardcode the pop name
     	parser.addArgument("cross_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS", "CLM",
                     "ESN", "ESN", "FIN", "GBR", "GIH","GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL",
                     "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "TST", "YRI").help("Cross population.");
 
     	//Creating optional arguments
+    	//TODO: Seriously? It's the same list. Oh yeah, I did that...
     	parser.addArgument("-op", "--out_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS",
                     "CLM", "ESN", "ESN", "FIN", "GBR", "GIH","GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL",
                     "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "TST", "YRI").help("Outgroup population. If not "
@@ -130,7 +131,7 @@ public class EnviSetup {
 	        throw new IllegalInputException(log, msg);
 	    }
 	
-	    //default out_pop to cross population if not set
+	    //default out_pop to cross population if not set otherwise
 	    if (parsedArgs.get("out_pop") == null) {
 	        Object XP = parsedArgs.get("cross_pop");
 	        parsedArgs.put("out_pop", XP);

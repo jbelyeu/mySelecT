@@ -50,21 +50,22 @@ public class MapParser {
 		
 		checkMapFile();
 		
-		GeneticMap gm = new GeneticMap();
+		GeneticMap genMap = new GeneticMap();
 		
 		String[] cur_ln = new String[0];
 		String[] nxt_ln = new String[0];
 		
-		if(skip_first_line)
+		if (skip_first_line){
 			map_scan.nextLine();
+		}
 		
 		nxt_ln = map_scan.nextLine().split("\\s+");
 		
-		if(!nxt_ln[0].matches("[0-9]+")) {
+		if (!nxt_ln[0].matches("[0-9]+")) {
 			String msg = "Error: Genetic Map has invalid number format";
 			throw new FileParsingException(log, msg);
 		}
-		if(nxt_ln.length > 3 && !nxt_ln[3].matches("\\s+")) {
+		if (nxt_ln.length > 3 && !nxt_ln[3].matches("\\s+")) {
 			String msg = "Error: Map file " + map_path +" has invalid formatting";
 			throw new FileParsingException(log, msg);
 		}
@@ -78,7 +79,7 @@ public class MapParser {
 			line++;
 			try {
 				
-				gm.put(cur_pos, nxt_pos, rate);
+				genMap.put(cur_pos, nxt_pos, rate);
 				
 				cur_ln = nxt_ln;
 				cur_pos = nxt_pos;
@@ -97,32 +98,27 @@ public class MapParser {
 			
 		} while(map_scan.hasNextLine());
 		
-//		for(Range r : gm.getRangeSet()) {
-//			System.out.println(r + " => Double [" + gm.get(r) + "]");
-//			log.addLine(r.toString() + " => Double [" + gm.get(r) + "]");
-//		}
-		
-		return gm;
+		return genMap;
 	}
 	
 	private void checkMapFile() throws FileParsingException {
 		
-		Scanner temp_scan = null;
 		
-		try {
-			temp_scan = new Scanner(new File(map_path));
+		
+		try (Scanner temp_scan = new Scanner(new File(map_path) ) ) {
+			
 			
 			String first_line = temp_scan.nextLine();
 			String[] first_line_arr = first_line.split("\\s+");
 			
-			if(!first_line_arr[0].matches("[0-9]+"))
+			if (!first_line_arr[0].matches("[0-9]+"))
 				skip_first_line = true;
 			
-			for(int i = 0; i < TEST_LINES; i++) {
+			for (int i = 0; i < TEST_LINES; i++) {
 				String line = temp_scan.nextLine();
 				String [] line_arr = line.split("\\s+");
 				
-				if(line_arr.length != 3) {
+				if (line_arr.length != 3) {
 					String msg = "Error: Map file " + map_path 
 							+" has invalid formatting";
 					throw new FileParsingException(log, msg);
