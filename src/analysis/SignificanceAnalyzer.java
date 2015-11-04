@@ -34,13 +34,15 @@ public class SignificanceAnalyzer {
 		
 		try {
 			
-			if((Boolean) arg_map.get("combine_only")) {
+			if ((Boolean) arg_map.get("combine_only")) {
 				
 				Combiner c = new Combiner(arg_map, log);
-				if(arg_map.get("combine_fltr").equals(".:default:."))
+				if (arg_map.get("combine_fltr").equals(".:default:.")) {
 					c.combineWindows();
-				else
+				}
+				else {
 					c.combineWindows((String) arg_map.get("combine_fltr"));
+				}
 				
 				c.writeStats();
 			}
@@ -48,14 +50,17 @@ public class SignificanceAnalyzer {
 				
 				Combiner c = new Combiner(arg_map, log);
 				
-				if((Boolean) arg_map.get("use_incomp"))
+				if ((Boolean) arg_map.get("use_incomp")) {
 					c.combineWindows();
-				else
+				}
+				else {
 					c.combineAnalysisData();
+				}
 				
 				
-				if((Boolean) arg_map.get("write_combine"))
+				if ((Boolean) arg_map.get("write_combine")) {
 					c.writeStats();
+				}
 				
 				System.out.println("\nStarting Analysis");
 				boolean run_normalization = (Boolean) arg_map.get("run_norm");
@@ -74,7 +79,7 @@ public class SignificanceAnalyzer {
 			log.addLine("\n\nSelecT Died Prematurely. Error in computation.");
 			
 			e.printStackTrace();
-
+			//TODO: Should we move the lines like it says? It doesn't say why he didn't.
 			System.exit(1); // alternately, we could remove this and mv the next 2 lines into the try block
 		}	
 		
@@ -91,7 +96,7 @@ public class SignificanceAnalyzer {
 		//Creating required arguments
 		parser.addArgument("wrk_dir").type(Arguments.fileType().verifyIsDirectory()
                 .verifyCanRead()).help("SelecT workspace directory (created in phase 1)");
-		
+		//TODO: chromosome number again
 		parser.addArgument("chr").type(Integer.class).choices(Arguments.range(1, 22))
 				.help("Chromosome number");
 		
@@ -149,6 +154,7 @@ public class SignificanceAnalyzer {
             Log err_log = new Log(Log.type.stat);
             err_log.addLine("Error: Failed to parse arguments"); 
             err_log.addLine("\t*" + e.getMessage());
+            //TODO: API again. I think the step reference is right this time, but we might want to clarify
             err_log.addLine("\t*Go to api for more information or run with -h as first parameter for help");
 			err_log.addLine("\t*You will need to redo this entire step--all new data is invalid");
 			
@@ -176,11 +182,12 @@ public class SignificanceAnalyzer {
 		
 		File wrk_dir = (File) arg_map.get("wrk_dir");
 		wrk_dir = new File(wrk_dir.getAbsolutePath() + File.separator + "final_out");
-		if(!wrk_dir.exists())
+		if (!wrk_dir.exists()) {
 			wrk_dir.mkdir();
+		}
 		out_file = new File(wrk_dir.getAbsoluteFile() + File.separator + "significant_loci.tsv");
 		int num = 1;
-		while(out_file.exists()) {
+		while (out_file.exists()) {
 			out_file = new File(wrk_dir.getAbsoluteFile() + File.separator 
 					+ "significant_loci" + num + ".tsv");
 			num++;
@@ -190,11 +197,11 @@ public class SignificanceAnalyzer {
 	public void findSignificantSNPs(boolean run_normalization, boolean ignore_mop, boolean ignore_pop) 
 			throws IllegalInputException {
 		
-		if(run_normalization) 
+		if (run_normalization) {
 			all_ws = normalizeAllWindows(all_ws);
+		}
 		
 		try {
-			
 			System.out.println("Extracting significant loci");
 			log.addLine("Extracting significant loci");
 			
@@ -204,33 +211,36 @@ public class SignificanceAnalyzer {
 					+ "\tunstd_PoP\tunstd_MoP\twin_PoP\twin_MoP\n");
 			
 			Collections.sort(all_ws);
-			for(int i = 0; i < all_ws.size(); i++) {
+			for (int i = 0; i < all_ws.size(); i++) {
 				
 				WindowStats ws = all_ws.get(i);
 				List<SNP> ws_snps = ws.getAllSNPs();
 				
-				for(int j = 0; j < ws_snps.size(); j++) {
+				for (int j = 0; j < ws_snps.size(); j++) {
 					
 					SNP s = ws_snps.get(j);
 					
-					if(ignore_mop && ignore_pop) {
-						if(ws.getStdPopScore(s) >= sig_score
-								|| ws.getStdMopScore(s) >= sig_score) 
+					if (ignore_mop && ignore_pop) {
+						if (ws.getStdPopScore(s) >= sig_score
+								|| ws.getStdMopScore(s) >= sig_score) {
 							pw.print(ws.printSNP(s));
-					} else if(ignore_mop) {
-						if(ws.getStdPopScore(s) >= sig_score) 
+						}
+					} else if (ignore_mop) {
+						if (ws.getStdPopScore(s) >= sig_score) {
 							pw.print(ws.printSNP(s));
-					} else if(ignore_pop) {
-						if(ws.getStdMopScore(s) >= sig_score)
+						}
+					} else if (ignore_pop) {
+						if (ws.getStdMopScore(s) >= sig_score) {
 							pw.print(ws.printSNP(s));
+						}
 					} else {
-						if(ws.getStdPopScore(s) >= sig_score
-								&& ws.getStdMopScore(s) >= sig_score)
+						if (ws.getStdPopScore(s) >= sig_score
+								&& ws.getStdMopScore(s) >= sig_score) {
 							pw.print(ws.printSNP(s));
+						}
 					}
 				}
-			}
-			
+			}			
 			pw.close();
 			
 		} catch (FileNotFoundException e) {
@@ -250,7 +260,7 @@ public class SignificanceAnalyzer {
 		WindowStats comb_ws = new WindowStats(all_stats.get(0).getStPos(), 
 				all_stats.get(all_stats.size()-1).getEndPos());
 		
-		for(int i = 0; i < all_stats.size(); i++) {
+		for (int i = 0; i < all_stats.size(); i++) {
 			
 			WindowStats ws = all_stats.get(i);
 			
@@ -262,19 +272,21 @@ public class SignificanceAnalyzer {
 		
 		TreeMap<SNP, Double> std_pop = comb_ws.getStdPoP();
 		Set<SNP> all_pop_snps = std_pop.keySet();
-		for(SNP s : all_pop_snps) {
-			for(int i = 0; i < all_stats.size(); i++) {
-				if(all_stats.get(i).containsSNP(s))
+		for (SNP s : all_pop_snps) {
+			for (int i = 0; i < all_stats.size(); i++) {
+				if (all_stats.get(i).containsSNP(s)) {
 					all_stats.get(i).addStdPopScore(s, std_pop.get(s));
+				}
 			}
 		}
 		
 		TreeMap<SNP, Double> std_mop = comb_ws.getStdMoP();
 		Set<SNP> all_mop_snps = std_pop.keySet();
-		for(SNP s : all_mop_snps) {
-			for(int i = 0; i < all_stats.size(); i++) {
-				if(all_stats.get(i).containsSNP(s))
+		for (SNP s : all_mop_snps) {
+			for (int i = 0; i < all_stats.size(); i++) {
+				if (all_stats.get(i).containsSNP(s)) {
 					all_stats.get(i).addStdMopScore(s, std_mop.get(s));
+				}
 			}
 		}
 		
