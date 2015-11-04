@@ -25,8 +25,9 @@ public abstract class HaplotypeTests {
 		
 		//==========Find Mean==========
 		double sum = 0.0;
-		for(Double unstd_data : all_unstd_data)
+		for (Double unstd_data : all_unstd_data) {
 			sum += unstd_data;
+		}
 		
 		double win_expect = sum / all_unstd_data.size();
 		//=============================
@@ -34,7 +35,7 @@ public abstract class HaplotypeTests {
 		//===Find Standard Deviation===
 		double[] all_deviations = new double[all_unstd_data.size()];
 		
-		for(int i = 0; i < all_unstd_data.size(); i++) {
+		for (int i = 0; i < all_unstd_data.size(); i++) {
 			
 			double dev = all_unstd_data.get(i) - win_expect; 
 			dev = Math.pow(dev, 2);//or dev^2
@@ -42,8 +43,9 @@ public abstract class HaplotypeTests {
 		}
 		
 		double dev_sum = 0.0;
-		for(int i = 0; i < all_deviations.length; i++)
+		for(int i = 0; i < all_deviations.length; i++) {
 			dev_sum += all_deviations[i];
+		}
 		
 		double dev_mean = dev_sum / all_deviations.length;
 		
@@ -51,68 +53,22 @@ public abstract class HaplotypeTests {
 		//==============================
 		
 		//==========Calc Z-Score========
-		for(int i = 0; i < all_unstd_data.size(); i++)
+		for (int i = 0; i < all_unstd_data.size(); i++) {
 			all_data.add((all_unstd_data.get(i) - win_expect) / win_stddv);
+		}
 		//==============================
 		
 		return all_data;
 	}
 	
 	public abstract void runStat() throws StatsCalcException;
-//	abstract List<SNP> getUnusedSNPs();
 	public abstract Double getScoreAtSNP(SNP s);
 	public abstract Double getProbAtSNP(SNP s);
 	public abstract List<SNP> getSNPs();
 	public abstract List<Double> getStats();
 	public abstract List<Double> getProbs();
 	public abstract void printStats();
-//	public abstract void logRunStats();
-	
-//	protected List<Double> calcScoreProbabilities(List<Double> std_scores, 
-//													SimDist neut_sim, 
-//													SimDist sel_sim,
-//													boolean two_sided) throws StatsCalcException {
-//		
-//		List<Double> neut_probs = new ArrayList<Double>();
-//		List<Double> sel_probs = new ArrayList<Double>();
-//		List<Double> bayes_probs = new ArrayList<Double>();
-//		
-//		double prior_prob = 1 / (double) std_scores.size();
-//		
-//		for(int i = 0; i < std_scores.size(); i++) {
-//			
-//			Double score = std_scores.get(i);
-//			
-//			Double neut_prob = 0.0;
-//			if(two_sided) {
-//				neut_prob = neut_sim.get2SidedProb(score);
-//				neut_probs.add(neut_sim.get2SidedProb(score));
-//			}
-//			else {
-//				neut_prob = neut_sim.get1SidedProb(score, false);
-//				neut_probs.add(neut_sim.get1SidedProb(score, false));
-//			}
-//			
-//			Double sel_prob = 0.0;
-//			if(two_sided) {
-//				sel_prob = sel_sim.get2SidedProb(score);
-//				sel_probs.add(sel_sim.get2SidedProb(score));
-//			}
-//			else {
-//				sel_prob = sel_sim.get1SidedProb(score, true);
-//				sel_probs.add(sel_sim.get1SidedProb(score, true));
-//			}
-//			
-//			double cms_nom = sel_prob * prior_prob;
-//			double cms_denom = ((sel_prob*prior_prob) + (neut_prob*(1-prior_prob)));
-//			Double score_prob = cms_nom / cms_denom;
-//			bayes_probs.add(score_prob);
-//			
-//			System.out.println(score + "\t" + neut_prob + "\t" + sel_prob + "\t" + score_prob);
-//		}
-//		
-//		return bayes_probs;
-//	}
+
 	
 	protected List<Double> calcScoreProbabilities(List<Double> std_scores, 
 													SimDist neut_sim, 
@@ -124,8 +80,7 @@ public abstract class HaplotypeTests {
 		List<Double> bayes_post = new ArrayList<Double>();
 		double prior_prob = prior;
 		
-		if(deflt_prior)
-		{
+		if (deflt_prior) {
 			prior_prob = 1 / (double) std_scores.size();
 		}
 				
@@ -146,7 +101,7 @@ public abstract class HaplotypeTests {
 				post_prob = cms_num / cms_denom;
 			}
 
-			if (post_prob != 0.0){
+			if (post_prob != 0.0) {
 				bayes_post.add(post_prob);
 			}
 			else {
@@ -228,7 +183,7 @@ public abstract class HaplotypeTests {
 		int core_index = -1;
 		
 		for (int i = 0; i < ehh_pos.length; i++) {
-			if(ehh_pos[i] == core_snp_pos) {
+			if (ehh_pos[i] == core_snp_pos) {
 				core_index = i;
 			}
 		}
@@ -285,8 +240,9 @@ public abstract class HaplotypeTests {
 			if (w.getStPos() < s.getPosition() && w.getEndPos() >= s.getPosition()) {
 				List<SNP> win_snps = w.getSNPs();
 				for (SNP anc_snp : win_snps) {
-					if (s.getPosition() == anc_snp.getPosition())
+					if (s.getPosition() == anc_snp.getPosition()) {
 						return anc_snp;
+					}
 				}
 			}
 		}
@@ -297,11 +253,11 @@ public abstract class HaplotypeTests {
 	protected Individual[] combineIndvArrays(Individual[] a, Individual[] b) {
 		Individual[] tot = new Individual[a.length + b.length];
 		
-		for(int i = 0; i < a.length; i++) {
+		for (int i = 0; i < a.length; i++) {
 			tot[i] = a[i];
 		}
 		
-		for(int j = 0; j < b.length; j++) {
+		for (int j = 0; j < b.length; j++) {
 			tot[j + a.length] = b[j];
 		}
 		
@@ -337,14 +293,14 @@ public abstract class HaplotypeTests {
 		
 		double[] all_deviations = new double[all_unstd_data.size()];
 		
-		for(int i = 0; i < all_unstd_data.size(); i++) {			
+		for (int i = 0; i < all_unstd_data.size(); i++) {			
 			double dev = all_unstd_data.get(i) - mean; 
 			dev = Math.pow(dev, 2);//or dev^2
 			all_deviations[i] = dev;
 		}
 		
 		double dev_sum = 0.0;
-		for(int i = 0; i < all_deviations.length; i++) {
+		for (int i = 0; i < all_deviations.length; i++) {
 			dev_sum += all_deviations[i];
 		}
 		
@@ -357,7 +313,7 @@ public abstract class HaplotypeTests {
 		
 		double sum = 0.0;
 		
-		for(Double unstd_data : all_unstd_data) {
+		for (Double unstd_data : all_unstd_data) {
 			sum += unstd_data;
 		}
 		

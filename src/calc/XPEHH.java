@@ -100,7 +100,7 @@ public class XPEHH extends HaplotypeTests {
 		Individual[] all_indv = combineIndvArrays(tp_individuals, xp_individuals);
 		
 		List<SNP> win_snps = win.getSNPs();
-		for(int i = 0; i < win_snps.size(); i++) {
+		for (int i = 0; i < win_snps.size(); i++) {
 			
 			SNP core_snp = win_snps.get(i);
 			
@@ -108,7 +108,7 @@ public class XPEHH extends HaplotypeTests {
 			EHH comb_ehh = getCombinedEHH(all_indv, core_snp);
 			double last_ehh = comb_ehh.getLastEhhValue();
 			
-			if(last_ehh < SIGNIFICANT_EHH_VALUE && last_ehh > 0.0) {
+			if (last_ehh < SIGNIFICANT_EHH_VALUE && last_ehh > 0.0) {
 				
 				//for defining the EHH range to end EHH calculations
 				SNP last_snp = comb_ehh.getLastSNP();
@@ -117,7 +117,7 @@ public class XPEHH extends HaplotypeTests {
 				Double tp_integral = calcUnstandardEhhIntegral(core_snp, last_snp, tp_individuals);
 				Double xp_integral = calcUnstandardEhhIntegral(core_snp, last_snp, xp_individuals);
 				
-				if(tp_integral != null && xp_integral != null) {
+				if (tp_integral != null && xp_integral != null) {
 					
 					//main XPEHH function; unstandardized
 					double unstd_XPEHH = Math.log(tp_integral / xp_integral);
@@ -141,18 +141,15 @@ public class XPEHH extends HaplotypeTests {
 		all_XPEHH = standardizeData(all_unstd_XPEHH);
 		
 		//calculates the bayesian posterior probability of each given score
-//		bayes_probs = calcScoreProbabilities(all_XPEHH, neut_sim, sel_sim, false);
 		bayes_probs = calcScoreProbabilities(all_XPEHH, neut_sim, sel_sim, deflt_prior, prior_prob);
-		
-//		printStats();
-//		logRunStats();
 	} 
 	
 	@Override
 	public Double getScoreAtSNP(SNP s) {
-		for(int i = 0; i < all_XPEHH_snps.size(); i++) {
-	  		if(s.sameAs(all_XPEHH_snps.get(i)))
+		for (int i = 0; i < all_XPEHH_snps.size(); i++) {
+	  		if (s.sameAs(all_XPEHH_snps.get(i))) {
 	  			return all_XPEHH.get(i);
+	  		}
 	  	}
 	  
 	  	return Double.NaN;
@@ -160,9 +157,10 @@ public class XPEHH extends HaplotypeTests {
 	
 	@Override
 	public Double getProbAtSNP(SNP s) {
-	  	for(int i = 0; i < all_XPEHH_snps.size(); i++) {
-	  		if(s.sameAs(all_XPEHH_snps.get(i)))
+	  	for (int i = 0; i < all_XPEHH_snps.size(); i++) {
+	  		if (s.sameAs(all_XPEHH_snps.get(i))) {
 	  			return bayes_probs.get(i);
+	  		}
 	  	}
 	  
 	  	return null;
@@ -187,21 +185,13 @@ public class XPEHH extends HaplotypeTests {
 	public void printStats() {
 		
 		System.out.println("\nShowing XPEHH Data");
-		for(int i = 0; i < all_XPEHH.size(); i++) {
+		for (int i = 0; i < all_XPEHH.size(); i++) {
 			System.out.print("XPEHH =\t");
 			System.out.print(all_XPEHH_snps.get(i) + "\t");
 			System.out.print(all_unstd_XPEHH.get(i) + "\t");
 			System.out.println(all_XPEHH.get(i));
 		}
 	}
-
-//	@Override
-//	public void logRunStats() {
-//		
-//		log.addLine("Out of " + win.getSNPs().size() + " SNPs, " 
-//				+ all_XPEHH.size() + " were successful and " + unused_snps.size() 
-//				+ " SNPs were unsuccessful");
-//	}
 	
 	public void printRStats() {
 		
@@ -215,7 +205,7 @@ public class XPEHH extends HaplotypeTests {
 		System.out.println("\tMean:\t" + mean);
 		System.out.println("\tSt Dev:\t" + st_dev);
 		
-		for(int i = 0; i < all_XPEHH.size(); i++) {
+		for (int i = 0; i < all_XPEHH.size(); i++) {
 			
 			xpehh_sb.append(all_XPEHH.get(i) + ",");
 			pos_sb.append(all_XPEHH_snps.get(i).getPosition() + ",");
@@ -229,8 +219,9 @@ public class XPEHH extends HaplotypeTests {
 		ExtendedHaplotype pop_eh = setHaplotypeGroup(indv);
 		EHH pop_ehh = new EHH(win, indv, core_snp, pop_eh, all_win);
 		boolean significant = pop_ehh.calcEhhToPosition(last_snp.getPosition());
-		if(!significant)
+		if (!significant) {
 			return null;
+		}
 		
 		double[] ehh_vals = pop_ehh.getEhhValues();
 		int[] ehh_pos = pop_ehh.getEhhPositions();

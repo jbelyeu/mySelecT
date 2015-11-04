@@ -66,7 +66,7 @@ public class Fst extends HaplotypeTests {
 		
 		//Starting Fst Analysis
 		List<SNP> win_snps = win.getSNPs();
-		for(int i = 0; i < win_snps.size(); i++) {
+		for (int i = 0; i < win_snps.size(); i++) {
 			
 			SNP core_snp = win_snps.get(i);
 			int index = win.getSnpIndex(core_snp);
@@ -122,26 +122,22 @@ public class Fst extends HaplotypeTests {
 									sample_var,
 									avg_hetero_freq);
 			
-			//Wright's Fst
-			//double fst = sample_var / (avg_freq * (1 - avg_freq));
 			
 			all_Fst_snps.add(core_snp);
 			all_Fst.add(fst);
 		}
 		
 		//calculates the bayesian posterior probability of each given score
-//		bayes_probs = calcScoreProbabilities(all_Fst, neut_sim, sel_sim, false);
 		bayes_probs = calcScoreProbabilities(all_Fst, neut_sim, sel_sim, deflt_prior, prior_prob);
-		
-//		printStats();
-//		logRunStats();
+
 	}
 	
 	@Override
 	public Double getScoreAtSNP(SNP s) {
-		for(int i = 0; i < all_Fst_snps.size(); i++) {
-	  		if(s.sameAs(all_Fst_snps.get(i)))
+		for (int i = 0; i < all_Fst_snps.size(); i++) {
+	  		if (s.sameAs(all_Fst_snps.get(i))) {
 	  			return all_Fst.get(i);
+	  		}
 	  	}
 	  
 	  	return Double.NaN;
@@ -149,9 +145,10 @@ public class Fst extends HaplotypeTests {
 	
 	@Override
 	public Double getProbAtSNP(SNP s) {
-	  	for(int i = 0; i < all_Fst_snps.size(); i++) {
-	  		if(s.sameAs(all_Fst_snps.get(i)))
+	  	for (int i = 0; i < all_Fst_snps.size(); i++) {
+	  		if (s.sameAs(all_Fst_snps.get(i))) {
 	  			return bayes_probs.get(i);
+	  		}
 	  	}
 	  
 	  	return null;
@@ -176,20 +173,13 @@ public class Fst extends HaplotypeTests {
 	public void printStats() {
 		
 		System.out.println("\nShowing Fst Data");
-		for(int i = 0; i < all_Fst.size(); i++) {
+		for (int i = 0; i < all_Fst.size(); i++) {
 			System.out.print("Fst =\t");
 			System.out.print(all_Fst_snps.get(i) + "\t");
 			System.out.println(all_Fst.get(i));	
 		}
 	}
 
-//	@Override
-//	public void logRunStats() {
-//		
-//		log.addLine("Out of " + win.getSNPs().size() + " SNPs, " 
-//				+ all_Fst.size() + " were successful and " + unused_snps.size() 
-//				+ " SNPs were unsuccessful");
-//	}
 	
 	public void printRStats() {
 		
@@ -203,7 +193,7 @@ public class Fst extends HaplotypeTests {
 		System.out.println("\tMean:\t" + mean);
 		System.out.println("\tSt Dev:\t" + st_dev);
 		
-		for(int i = 0; i < all_Fst.size(); i++) {
+		for (int i = 0; i < all_Fst.size(); i++) {
 			
 			fst_sb.append(all_Fst.get(i) + ",");
 			pos_sb.append(all_Fst_snps.get(i).getPosition() + ",");
@@ -317,9 +307,10 @@ public class Fst extends HaplotypeTests {
 	private int getInstanceOfHeterozygosity(Individual[] indv, int index) {
 		
 		int instance = 0;
-		for(int i = 0; i <indv.length; i++) {
-			if(indv[i].getStrand1Allele(index) != indv[i].getStrand2Allele(index))
+		for (int i = 0; i <indv.length; i++) {
+			if (indv[i].getStrand1Allele(index) != indv[i].getStrand2Allele(index)) {
 				instance++;
+			}
 		}
 		
 		return instance;
@@ -329,11 +320,13 @@ public class Fst extends HaplotypeTests {
 	private int getInstanceOfAllele(Individual[] indv, int index) {
 		
 		int instance = 0;
-		for(int i = 0; i < indv.length; i++) {
-			if(indv[i].getStrand1Allele(index) == 0)
+		for (int i = 0; i < indv.length; i++) {
+			if (indv[i].getStrand1Allele(index) == 0) {
 				instance++;
-			if(indv[i].getStrand2Allele(index) == 0)
+			}
+			if (indv[i].getStrand2Allele(index) == 0) {
 				instance++;
+			}
 		}
 		
 		return instance;

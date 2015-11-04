@@ -73,16 +73,16 @@ public class dDAF extends HaplotypeTests {
 		Individual[] all_xo_indv = combineIndvArrays(xp_ino_indv, op_inx_indv);
 		
 		List<SNP> win_snps = tp_win.getSNPs();
-		for(int i = 0; i < win_snps.size(); i++) {
+		for (int i = 0; i < win_snps.size(); i++) {
 			
 			SNP core_snp = win_snps.get(i);
 			SNP anc_snp = getAncestralSNP(core_snp, anc_types);
 			
-			if(checkValidSnpComparison(core_snp, anc_snp)) {
+			if (checkValidSnpComparison(core_snp, anc_snp)) {
 				
 				//Get proper intersected window for cross and outgroup populations
 				Window xo_win = getEquivalentWindow(xoin_wins, tp_win);
-				if(xo_win != null && xo_win.containsSNP(core_snp)) {
+				if (xo_win != null && xo_win.containsSNP(core_snp)) {
 				
 					SNP xo_snp = xo_win.getSNP(core_snp.getPosition(), 
 												core_snp.getAllele0(), 
@@ -117,18 +117,17 @@ public class dDAF extends HaplotypeTests {
 		}
 		
 		//calculates the bayesian posterior probability of each given score
-//		bayes_probs = calcScoreProbabilities(all_delta_DAF, neut_sim, sel_sim, true);
 		bayes_probs = calcScoreProbabilities(all_delta_DAF, neut_sim, sel_sim, deflt_prior, prior_prob);
 		
-//		printStats();
-//		logRunStats();
+
 	}
 	
 	@Override
 	public Double getScoreAtSNP(SNP s) {
-		for(int i = 0; i < all_delta_DAF_snps.size(); i++) {
-	  		if(s.sameAs(all_delta_DAF_snps.get(i)))
+		for (int i = 0; i < all_delta_DAF_snps.size(); i++) {
+	  		if (s.sameAs(all_delta_DAF_snps.get(i))) {
 	  			return all_delta_DAF.get(i);
+	  		}
 	  	}
 	  
 	  	return Double.NaN;
@@ -136,9 +135,10 @@ public class dDAF extends HaplotypeTests {
 	
 	@Override
 	public Double getProbAtSNP(SNP s) {
-	  	for(int i = 0; i < all_delta_DAF_snps.size(); i++) {
-	  		if(s.sameAs(all_delta_DAF_snps.get(i)))
+	  	for (int i = 0; i < all_delta_DAF_snps.size(); i++) {
+	  		if (s.sameAs(all_delta_DAF_snps.get(i))) {
 	  			return bayes_probs.get(i);
+	  		}
 	  	}
 	  
 	  	return null;
@@ -163,21 +163,13 @@ public class dDAF extends HaplotypeTests {
 	public void printStats() {
 		
 		System.out.println("\nShowing DAF Data");
-		for(int i = 0; i < all_delta_DAF.size(); i++) {
+		for (int i = 0; i < all_delta_DAF.size(); i++) {
 			System.out.print("DAF =\t");
 			System.out.print(all_delta_DAF_snps.get(i) + "\t");
 			System.out.print(all_DAF.get(i) + "\t");
 			System.out.println(all_delta_DAF.get(i));
 		}
 	}
-	
-//	@Override
-//	public void logRunStats() {
-//		
-//		log.addLine("Out of " + tp_win.getSNPs().size() + " SNPs, " 
-//				+ all_delta_DAF.size() + " were successful and " + unused_snps.size() 
-//				+ " SNPs were unsuccessful");
-//	}
 	
 	public List<Double> getDafStats() {
 		return all_DAF;
@@ -195,7 +187,7 @@ public class dDAF extends HaplotypeTests {
 		System.out.println("\tMean:\t" + mean);
 		System.out.println("\tSt Dev:\t" + st_dev);
 		
-		for(int i = 0; i < all_delta_DAF.size(); i++) {
+		for (int i = 0; i < all_delta_DAF.size(); i++) {
 			
 			daf_sb.append(all_delta_DAF.get(i) + ",");
 			pos_sb.append(all_delta_DAF_snps.get(i).getPosition() + ",");
@@ -210,31 +202,35 @@ public class dDAF extends HaplotypeTests {
 		int count = 0;
 		
 		//When core_snps's a1 = derived type
-		if(core_snp.getAllele0().equals(anc_snp.getAllele0())) {
-			for(int i = 0; i < indv.length; i++) {
+		if (core_snp.getAllele0().equals(anc_snp.getAllele0())) {
+			for (int i = 0; i < indv.length; i++) {
 				
 				//adding the index of the individual with the corresponding strand (1)
 				int st1_allele = indv[i].getStrand1Allele(snp_index);
-				if(st1_allele == 1)
+				if (st1_allele == 1) {
 					count++;
+				}
 				
 				//adding the index of the individual with the corresponding strand (2)
 				int st2_allele = indv[i].getStrand2Allele(snp_index);
-				if(st2_allele == 1)
+				if (st2_allele == 1) {
 					count++;
+				}
 			}
 		}
 		//When core_snps's a0 = derived type
-		else if(core_snp.getAllele1().equals(anc_snp.getAllele0())) {
-			for(int i = 0; i < indv.length; i++) {
+		else if (core_snp.getAllele1().equals(anc_snp.getAllele0())) {
+			for (int i = 0; i < indv.length; i++) {
 				
 				int st1_allele = indv[i].getStrand1Allele(snp_index);
-				if(st1_allele == 0)
+				if (st1_allele == 0) {
 					count++;
+				}
 				
 				int st2_allele = indv[i].getStrand2Allele(snp_index);
-				if(st2_allele == 0)
+				if (st2_allele == 0) {
 					count++;
+				}
 			}
 		}
 	
@@ -243,10 +239,11 @@ public class dDAF extends HaplotypeTests {
 	
 	private Window getEquivalentWindow(List<Window> cross_wins, Window target_win) {
 		
-		for(Window w : cross_wins) {
-			if(w.getStPos() == target_win.getStPos()
-					&& w.getEndPos() == target_win.getEndPos())
+		for (Window w : cross_wins) {
+			if (w.getStPos() == target_win.getStPos() 
+					&& w.getEndPos() == target_win.getEndPos()) {
 				return w;
+			}
 		}
 		
 		return null;

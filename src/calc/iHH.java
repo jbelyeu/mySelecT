@@ -100,31 +100,30 @@ public class iHH extends HaplotypeTests {
 		
 		//Starting iHH Analysis
 		int st_index = win.getStIndex();
-		for(int i = 0; i < win.getSNPs().size(); i++) {
+		for (int i = 0; i < win.getSNPs().size(); i++) {
 			
 			Double unstd_iHH = getUnstandardizedIHH(win.getSNPs().get(i), (st_index + i));
 			
 			//saving the successful unstandardized iHH
-			if(unstd_iHH != null)
+			if (unstd_iHH != null) {
 				all_unstd_iHH.add(unstd_iHH);
+			}
 		}
 		
 		//calculating and saving all standardized iHH values
 		all_std_iHH = standardizeData(all_unstd_iHH);
 		
 		//calculates the bayesian posterior probability of each given score
-//		bayes_probs = calcScoreProbabilities(all_std_iHH, neut_sim, sel_sim, true);//old
 		bayes_probs = calcScoreProbabilities(all_std_iHH, neut_sim, sel_sim, deflt_prior, prior_prob);
-		
-//		printStats();
-//		logRunStats();
+
 	}
 	
 	@Override
 	public Double getScoreAtSNP(SNP s) {
-		for(int i = 0; i < all_iHH_snp.size(); i++) {
-	  		if(s.sameAs(all_iHH_snp.get(i)))
+		for (int i = 0; i < all_iHH_snp.size(); i++) {
+	  		if (s.sameAs(all_iHH_snp.get(i))) {
 	  			return all_std_iHH.get(i);
+	  		}
 	  	}
 	  
 	  	return Double.NaN;
@@ -132,9 +131,10 @@ public class iHH extends HaplotypeTests {
 	
 	@Override
 	public Double getProbAtSNP(SNP s) {
-	  	for(int i = 0; i < all_iHH_snp.size(); i++) {
-	  		if(s.sameAs(all_iHH_snp.get(i)))
+	  	for (int i = 0; i < all_iHH_snp.size(); i++) {
+	  		if (s.sameAs(all_iHH_snp.get(i))) {
 	  			return bayes_probs.get(i);
+	  		}
 	  	}
 	  
 	  	return null;
@@ -159,21 +159,13 @@ public class iHH extends HaplotypeTests {
 	public void printStats() {
 		
 		System.out.println("\nShowing iHH Data");
-		for(int i = 0; i < all_std_iHH.size(); i++) {
+		for (int i = 0; i < all_std_iHH.size(); i++) {
 			System.out.print("iHH =\t");
 			System.out.print(all_iHH_snp.get(i) + "\t");
 			System.out.print(all_unstd_iHH.get(i) + "\t");
 			System.out.println(all_std_iHH.get(i));	
 		}
 	}
-
-//	@Override
-//	public void logRunStats() {
-//		
-//		log.addLine("Out of " + win.getSNPs().size() + " SNPs, " 
-//				+ all_std_iHH.size() + " were successful and " + unused_snps.size() 
-//				+ " SNPs were unsuccessful");
-//	}
 	
 	public void printRStats() {
 		
@@ -187,7 +179,7 @@ public class iHH extends HaplotypeTests {
 		System.out.println("\tMean:\t" + mean);
 		System.out.println("\tSt Dev:\t" + st_dev);
 		
-		for(int i = 0; i < all_std_iHH.size(); i++) {
+		for (int i = 0; i < all_std_iHH.size(); i++) {
 			
 			ihh_sb.append(all_std_iHH.get(i) + ",");
 			pos_sb.append(all_iHH_snp.get(i).getPosition() + ",");
@@ -202,12 +194,12 @@ public class iHH extends HaplotypeTests {
 		
 		SNP anc_snp = getAncestralSNP(core_snp, anc_types);
 		
-		if(checkValidSnpComparison(core_snp, anc_snp)) {
+		if (checkValidSnpComparison(core_snp, anc_snp)) {
 				
 			//Initial Grouping (according to ancestral or derived type)
 			setHaplotypeGroups(anc_eh, der_eh, individuals, snp_index, anc_snp, core_snp);
 			
-			if(anc_eh.size() <= 1 || der_eh.size() <= 1) {
+			if (anc_eh.size() <= 1 || der_eh.size() <= 1) {
 				//No variance and thus no EHH pattern can be found
 				unused_snps.add(core_snp);
 				return null;
@@ -221,16 +213,18 @@ public class iHH extends HaplotypeTests {
 			
 			//Running Ancestral Analysis
 			significant = anc_ehh.calcSignificantEhhValues();
-			if(!significant)
+			if (!significant) {
 				return null;
+			}
 			
 			double[] ehh_values_anc = anc_ehh.getEhhValues();
 			int[] ehh_pos_anc = anc_ehh.getEhhPositions();
 			
 			//Running Derived Analysis
 			significant = der_ehh.calcSignificantEhhValues();
-			if(!significant)
+			if (!significant) {
 				return null;
+			}
 			
 			double[] ehh_values_der = der_ehh.getEhhValues();
 			int[] ehh_pos_der = der_ehh.getEhhPositions();
@@ -248,7 +242,7 @@ public class iHH extends HaplotypeTests {
 			return null;
 		}
 		
-		if(Double.isNaN(unstd_iHH) || Double.isInfinite(unstd_iHH)) {
+		if (Double.isNaN(unstd_iHH) || Double.isInfinite(unstd_iHH)) {
 			//Irregular iHH values
 			unused_snps.add(core_snp);
 			return null;
