@@ -67,9 +67,10 @@ public double getRecombRate(int up_pos, int dwn_pos) {
 		Range up_rng = null;
 		Range last_rng = st_pos.get(st_pos.size() - 1);
 		
-		if(dwn_rng != null)
+		if (dwn_rng != null) {
 			up_rng = getRangeFromDwnRng(up_pos, dwn_rng);
-		else if(dwn_rng == null && dwn_pos > 0 && up_pos > 0) {
+		}
+		else if (dwn_rng == null && dwn_pos > 0 && up_pos > 0) {
 			
 			double avg_rate = (double) rate_sum / last_rng.getEnd();
 			return avg_rate * (double) (up_pos - dwn_pos);
@@ -80,34 +81,36 @@ public double getRecombRate(int up_pos, int dwn_pos) {
 			System.exit(0);
 		}
 		
-		if(up_rng == null && dwn_pos > 0 && up_pos > 0) {
+		if (up_rng == null && dwn_pos > 0 && up_pos > 0) {
 			
 			double avg_rate = (double) rate_sum / last_rng.getEnd();
 			return avg_rate * (double) (up_pos - dwn_pos);
 		}
-		else if(up_rng == null) {
+		else if (up_rng == null) {
 			System.out.println("Fatal Error: up position " + up_pos + " is unacceptable. "
 					+ "Check genetic map for irregularities and api for more info");
 			System.exit(0);
 		}
 		
 		//Case 3: recombination rate can be estimated within single GenMap entry
-		if(up_rng.equals(dwn_rng))
+		if (up_rng.equals(dwn_rng)) {
 			return getLocalizedRecombRate(up_rng, up_pos, dwn_pos);
+		}
 		
 		double dwn_recomb_rate = getLocalizedRecombRate(dwn_rng, dwn_rng.getEnd(), dwn_pos); 
 		double up_recomb_rate = getLocalizedRecombRate(up_rng, up_pos, up_rng.getSt()); 
 		
 		//Case 4: recombination rate can be estimated with exactly 2 GenMap entries
-		if(up_rng.getSt() == (dwn_rng.getEnd() + 1))
+		if (up_rng.getSt() == (dwn_rng.getEnd() + 1)) {
 			return dwn_recomb_rate + up_recomb_rate;
+		}
 		
 		//Case 5: recombination rate is estimated with 2+ GenMap entries
 		double tot_recomb_rate = up_recomb_rate + dwn_recomb_rate;
 		int up_index = up_rng.getIndex();
 		int dwn_index = dwn_rng.getIndex();
 		
-		for(int i = dwn_index + 1; i < up_index; i++) { 
+		for (int i = dwn_index + 1; i < up_index; i++) { 
 			
 			Range r = st_pos.get(i);
 			tot_recomb_rate += gen_map.get(r);
@@ -121,8 +124,9 @@ public double getRecombRate(int up_pos, int dwn_pos) {
 		
 		Range key = getRange(pos);
 		
-		if(key == null)
+		if (key == null) {
 			return 0.0;
+		}
 		
 		return gen_map.get(key);
 	}
@@ -137,9 +141,10 @@ public double getRecombRate(int up_pos, int dwn_pos) {
 	
 	public Range getRange(int pos) {
 		
-		for(Range r : gen_map.keySet()) {
-			if(r.getSt() <= pos && r.getEnd() >= pos)
+		for (Range r : gen_map.keySet()) {
+			if (r.getSt() <= pos && r.getEnd() >= pos) {
 				return r;
+			}
 		}
 		
 		return null;
@@ -147,11 +152,12 @@ public double getRecombRate(int up_pos, int dwn_pos) {
 	
 	private Range getRangeFromDwnRng(int pos, Range rng) {
 		
-		for(int i = rng.getIndex(); i < st_pos.size(); i++) {
+		for (int i = rng.getIndex(); i < st_pos.size(); i++) {
 			
 			Range r = st_pos.get(i);
-			if(r.getSt() <= pos && r.getEnd() >= pos)
+			if (r.getSt() <= pos && r.getEnd() >= pos) {
 				return r;
+			}
 		}
 		
 		return null;

@@ -13,8 +13,7 @@ public class ExtendedHaplotype {
 	
 	public ExtendedHaplotype() {
 		haplo = new LinkedList<IDStrand>();
-	}
-	
+	}	
 	
 	public void add(int id, int strand) {
 		haplo.add(new IDStrand(id, strand));
@@ -73,11 +72,12 @@ public class ExtendedHaplotype {
 		public IDStrand(int id, int strand) {
 			this.id = id;
 			
-			if(strand == 1 || strand == 2) {
+			if (strand == 1 || strand == 2) {
 				this.strand = strand;
 			}
-			else
+			else {
 				strand = 0; //error
+			}
 		}
 		
 		public int getID() {
@@ -95,7 +95,5 @@ public class ExtendedHaplotype {
 	}
 //------------------------------------------------------------------------------	
 //------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-	
-	
+//------------------------------------------------------------------------------	
 }

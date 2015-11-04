@@ -38,20 +38,25 @@ public class Individual implements Serializable {
 	public boolean addAlleleToStrand1(String a) {
 		
 		boolean valid = true;
-		if(!isValidAllele(a))
+		if (!isValidAllele(a)) {
 			valid = false;
+		}
 		
 		char allele = a.charAt(0);
 		
-		if((str1_index + 1) == strand1.length)
+		if ((str1_index + 1) == strand1.length) {
 			strand1 = increaseSize(strand1);
+		}
 		
-		if(!valid)
+		if (!valid) {
 			strand1[str1_index] = false;
-		if(allele == '0')
+		}
+		if (allele == '0') {
 			strand1[str1_index] = false;
-		else if(allele == '1')
+		}
+		else if (allele == '1') {
 			strand1[str1_index] = true;
+		}
 		
 		str1_index++;
 		return valid;
@@ -60,20 +65,24 @@ public class Individual implements Serializable {
 	public boolean addAlleleToStrand2(String a) {
 		
 		boolean valid = true;
-		if(!isValidAllele(a))
+		if (!isValidAllele(a)) {
 			valid = false;
+		}
 		
 		char allele = a.charAt(0);
 		
 		if((str2_index + 1) == strand2.length)
 			strand2 = increaseSize(strand2);
 		
-		if(!valid)
+		if (!valid) {
 			strand2[str2_index] = false;
-		else if(allele == '0')
+		}
+		else if (allele == '0') {
 			strand2[str2_index] = false;
-		else if(allele == '1')
+		}
+		else if (allele == '1') {
 			strand2[str2_index] = true;
+		}
 		
 		str2_index++;
 		return valid;
@@ -81,8 +90,9 @@ public class Individual implements Serializable {
 	
 	public void addAlleleToStrand1(boolean allele) {
 		
-		if((str1_index + 1) == strand1.length)
+		if ((str1_index + 1) == strand1.length) {
 			strand1 = increaseSize(strand1);
+		}
 		
 		strand1[str1_index] = allele;
 		str1_index++;
@@ -90,8 +100,9 @@ public class Individual implements Serializable {
 	
 	public void addAlleleToStrand2(boolean allele) {
 		
-		if((str2_index + 1) == strand2.length)
+		if ((str2_index + 1) == strand2.length) {
 			strand2 = increaseSize(strand2);
+		}
 		
 		strand2[str2_index] = allele;
 		str2_index++;
@@ -100,19 +111,23 @@ public class Individual implements Serializable {
 	public int getStrand1Allele(int index) {
 		
 		boolean a = strand1[index];
-		if(a == true)
+		if (a == true) {
 			return 1;
-		else
+		}
+		else {
 			return 0;
+		}
 	}
 	
 	public int getStrand2Allele(int index) {
 		
 		boolean a = strand2[index];
-		if(a == true)
+		if (a == true) {
 			return 1;
-		else
+		}
+		else {
 			return 0;
+		}
 	}
 	
 	public boolean getStrand1Value(int index) {
@@ -126,23 +141,27 @@ public class Individual implements Serializable {
 	private boolean[] increaseSize(boolean[] str) {
 		boolean[] new_str = new boolean[str.length * 2];
 		
-		for(int i = 0; i < str.length; i++) 
+		for (int i = 0; i < str.length; i++) {
 			new_str[i] = str[i];
+		}
 		
 		return new_str;
 	}
 	
 	private boolean isValidAllele(String a) {
 		
-		if(a.length() != 1)
+		if (a.length() != 1) {
 			return false;
+		}
 		
 		char ch = a.charAt(0);
-		if(!Character.isDigit(ch))
+		if (!Character.isDigit(ch)) {
 			return false;
+		}
 		
-		if(ch != '1' && ch != '0')
+		if (ch != '1' && ch != '0') {
 			return false;
+		}
 		
 		return true;
 	}
@@ -168,23 +187,30 @@ public class Individual implements Serializable {
 		sb.append("Individual [id=" + id + ", chr=" + chr + "]\n");
 		
 		sb.append("\tStrand1 [");
-		if(st > strand1.length)
+		if (st > strand1.length) {
 			throw new IndexOutOfBoundsException();
-		if(st < 0)
+		}
+		if (st < 0) {
 			st = 0;
-		if(end > strand1.length)
+		}
+		if (end > strand1.length) {
 			end = strand1.length;
-		for(int i = st; i < end; i++) 
+		}
+		for (int i = st; i < end; i++) {
 			sb.append(strand1[i]);
+		}
 		sb.append("]\n");
 		
 		sb.append("\tStrand2 [");
-		if(st > strand2.length)
+		if (st > strand2.length) {
 			throw new IndexOutOfBoundsException();
-		if(end > strand2.length)
+		}
+		if (end > strand2.length) {
 			end = strand2.length;
-		for(int i = st; i < end; i++) 
+		}
+		for (int i = st; i < end; i++) {
 			sb.append(strand2[i]);
+		}
 		sb.append("]\n");
 		
 		return sb.toString();
@@ -196,13 +222,15 @@ public class Individual implements Serializable {
 		sb.append("Individual [id=" + id + ", chr=" + chr + "]\n");
 		
 		sb.append("\tStrand1 [");
-		for(int i = 0; i < str1_index; i++) 
+		for (int i = 0; i < str1_index; i++) {
 			sb.append(getStrand1Allele(i));
+		}
 		sb.append("] size=" + str1_index + "\n");
 		
 		sb.append("\tStrand2 [");
-		for(int i = 0; i < str2_index; i++) 
+		for (int i = 0; i < str2_index; i++) {
 			sb.append(getStrand2Allele(i));
+		}
 		sb.append("] size=" + str2_index + "\n");
 		
 		return sb.toString();
@@ -221,21 +249,28 @@ public class Individual implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Individual other = (Individual) obj;
-		if (id != other.id)
+		if (id != other.id) {
 			return false;
-		if (chr != other.chr)
+		}
+		if (chr != other.chr) {
 			return false;
-		if (!Arrays.equals(strand1, other.strand1))
+		}
+		if (!Arrays.equals(strand1, other.strand1)) {
 			return false;
-		if (!Arrays.equals(strand2, other.strand2))
+		}
+		if (!Arrays.equals(strand2, other.strand2)) {
 			return false;
+		}
 		return true;
 	}
 }

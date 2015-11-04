@@ -28,8 +28,9 @@ public class Range implements Serializable {
 	}
 	
 	public boolean contains(int pos) {
-		if(pos >= st && pos <= end) 
+		if (pos >= st && pos <= end) {
 			return true;
+		}
 		
 		return false;
 	}
@@ -50,19 +51,25 @@ public class Range implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Range other = (Range) obj;
-		if (end != other.end)
+		if (end != other.end) {
 			return false;
-		if (st != other.st)
+		}
+		if (st != other.st) {
 			return false;
-		if (index != other.index)
+		}
+		if (index != other.index) {
 			return false;
+		}
 		return true;
 	}
 

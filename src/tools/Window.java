@@ -49,20 +49,24 @@ public class Window implements Serializable {
 	
 	//returns null if this index isn't within the window's boundaries
 	public SNP getSNP(int index) {
-		if(containsIndex(index))
+		if (containsIndex(index)) {
 			return all_snps.get(index - st_index);
-		else 
+		}
+		else {
 			return null;
+		}
 	}
 	
 	public SNP getSNP(int pos, String a0, String a1) {
 		
-		for(SNP s : all_snps) {
-			if(s.getPosition() == pos) {
-				if(s.getAllele0().equals(a0) && s.getAllele1().equals(a1))
+		for (SNP s : all_snps) {
+			if (s.getPosition() == pos) {
+				if (s.getAllele0().equals(a0) && s.getAllele1().equals(a1)) {
 					return s;
-				if(s.getAllele0().equals(a1) && s.getAllele1().equals(a0))
+				}
+				if (s.getAllele0().equals(a1) && s.getAllele1().equals(a0)) {
 					return s;
+				}
 			}
 		}
 		return null;
@@ -71,29 +75,30 @@ public class Window implements Serializable {
 	//returns the index of the SNP within the Individual array
 	public int getSnpIndex(SNP snp) {
 		
-		for(int i = 0; i < all_snps.size(); i++) {
+		for (int i = 0; i < all_snps.size(); i++) {
 			SNP s = all_snps.get(i);
-			if(s.sameAs(snp))
+			if (s.sameAs(snp)) {
 				return st_index + i;	
-		}
-		
-		return -1;
-		
+			}
+		}		
+		return -1;		
 	}
 	
 	public boolean containsSNP(SNP snp) {
 		
-		for(SNP s : all_snps) {
-			if(s.sameAs(snp))
+		for (SNP s : all_snps) {
+			if (s.sameAs(snp)) {
 				return true;
+			}
 		}
 		
 		return false;
 	}
 	
 	public boolean containsIndex(int index) {
-		if(index >= st_index && index <= end_index)
+		if (index >= st_index && index <= end_index) {
 			return true;
+		}
 		return false;
 	}
 	
@@ -146,22 +151,29 @@ public class Window implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Window other = (Window) obj;
 		if (all_snps == null) {
-			if (other.all_snps != null)
+			if (other.all_snps != null) {
 				return false;
-		} else if (!all_snps.equals(other.all_snps))
+			}
+		} else if (!all_snps.equals(other.all_snps)) {
 			return false;
-		if (end_pos != other.end_pos)
+		}
+		if (end_pos != other.end_pos) {
 			return false;
-		if (st_pos != other.st_pos)
+		}
+		if (st_pos != other.st_pos) {
 			return false;
+		}
 		return true;
 	}
 
@@ -172,7 +184,7 @@ public class Window implements Serializable {
 				+ ", st_index=" + st_index + ", end_index=" + end_index + "] " 
 				+ "size=" + all_snps.size() + "\n");
 		
-		for(int i = 0; i < all_snps.size(); i++) {
+		for (int i = 0; i < all_snps.size(); i++) {
 			sb.append("\t" + all_snps.get(i).toString() + "\n");
 		}
 		

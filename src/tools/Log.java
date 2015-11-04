@@ -44,25 +44,25 @@ public class Log {
 		
 		try {
 			
-			if(type == Log.type.envi) {
+			if (type == Log.type.envi) {
 				
 				log_file = createLogFile("envi_log", true);
 				wr = new PrintWriter(log_file);
 				add(ENVI_ST);
 				
-			} else if(type == Log.type.stat) {
+			} else if (type == Log.type.stat) {
 				
 				log_file = createLogFile("stats_ERROR", false);
 				wr = new PrintWriter(log_file);
 				add(STAT_ST);
 				
-			} else if(type == Log.type.analysis) {
+			} else if (type == Log.type.analysis) {
 				
 				log_file = createLogFile("analysis_log", true);
 				wr = new PrintWriter(log_file);
 				add(ANAL_ST);
 				
-			} else if(type == Log.type.combine) {
+			} else if (type == Log.type.combine) {
 				
 				log_file = createLogFile("combine_log", true);
 				wr = new PrintWriter(log_file);
@@ -88,12 +88,13 @@ public class Log {
 		
 		try {
 			
-			if(type != Log.type.stat) {
+			if (type != Log.type.stat) {
 				//TODO: throw new error
+				//TODO: what kind of error should this be?
 			}
 			
 			log_file = new File("stats_" + name + ".log");
-			if(!log_file.exists()) {
+			if (!log_file.exists()) {
 				
 				log_file.createNewFile();
 				
@@ -103,10 +104,9 @@ public class Log {
 				add(BEGIN2);
 				add(STAT_BEGIN2);
 			}
-			else
+			else {
 				wr = new PrintWriter(new FileWriter(log_file, true));
-			
-			
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -131,7 +131,7 @@ public class Log {
 		int num = 1;
 		File file = new File(name + ".log");
 		
-		while(file.exists() && rename) {
+		while (file.exists() && rename) {
 			file = new File(name + num + ".log");
 			num++;
 		}
