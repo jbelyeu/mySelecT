@@ -245,9 +245,11 @@ public class SetupDriver {
 			
 			runVcfParcers(chr);
 		}
-//		else {
+		else {
 //			runHapsLegendParcers(chr);
-//		}
+			String msg = "Only .vcf files are currently supported";
+			throw new IllegalInputException(log, msg);
+		}
 	}
 	
 /*
