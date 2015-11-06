@@ -21,7 +21,7 @@ public class EnviSetup {
 	 * @param Required	Genetic Map directory
 	 * @param Required	Start chromosome number
 	 * @param Required	End chromosome number 
-	 * @param Required  Species name
+	 * @param Required	Species name
 	 * @param Required	Target Population
 	 * @param Required	Cross Population
 	 * @param Optional	Outgroup Population (-op flag; default is same as cross population)
