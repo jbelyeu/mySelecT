@@ -75,45 +75,35 @@ public class EnviSetup {
                     .verifyCanRead()).help("Directory with map file");
     	
     	//TODO: Don't hardcode the number
-    	parser.addArgument("start_chr").type(Integer.class).choices(Arguments.range(1, 22))
-    				.help("Starting chromosome number");
-    	
+    	parser.addArgument("start_chr").type(Integer.class).help("Starting chromosome number. "
+    			+ "Must be equal to or greater than 1.");
+
     	//TODO: Still don't hardcode the number
-    	parser.addArgument("end_chr").type(Integer.class).choices(Arguments.range(1, 22))
-    				.help("Ending chromosome number. "
-    						+ "Must be equal to or greater than starting chromosome number.");
+    	parser.addArgument("end_chr").type(Integer.class).help("Ending chromosome number. "
+    			+ "Must be equal to or greater than starting chromosome number.");
     	
     	//TODO: DONE. Check to see if the species is passed correctly
     	parser.addArgument("species").type(String.class)
-    				.help("Species name has to "
-    						+ "match the following format: genus_species");
+    			.help("Species name has to match the following format: genus_species");
     	
-    	//TODO: Don't hardcode the population name, either
-    	parser.addArgument("target_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS", "CLM",
-                    "ESN", "ESN", "FIN", "GBR", "GIH","GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL",
-                    "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "TST", "YRI").help("Target population");
+    	//TODO: Hardcoding removed. Need to include correct wiki page ref
+    	parser.addArgument("target_pop").help("Target population. See wiki at https://github.com/jbelyeu/mySelecT/wiki for details");
     	
-    	//TODO: I mean it. Don't hardcode the pop name
-    	parser.addArgument("cross_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS", "CLM",
-                    "ESN", "ESN", "FIN", "GBR", "GIH","GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL",
-                    "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "TST", "YRI").help("Cross population.");
+    	//TODO: Hardcoding removed. Need to include correct wiki page ref
+    	parser.addArgument("cross_pop").help("Cross population. See wiki at https://github.com/jbelyeu/mySelecT/wiki for details");
     	
     	//Creating optional arguments
-    	//TODO: Seriously? It's the same list. Oh yeah, I did that...
-    	parser.addArgument("-op", "--out_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS",
-                    "CLM", "ESN", "ESN", "FIN", "GBR", "GIH","GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL",
-                    "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "TST", "YRI").help("Outgroup population. If not "
-                    + "included, defaults to equal cross population");
+    	//TODO: Hardcoding removed. Need to include correct wiki page ref
+    	parser.addArgument("-op", "--out_pop").help("Outgroup population. If not included, defaults to equal cross population. "
+    			+ "See wiki at https://github.com/jbelyeu/mySelecT/wiki for details");
 
     	parser.addArgument("-wd", "--working_dir").type(Arguments.fileType().verifyIsDirectory()
                     .verifyCanRead()).setDefault(System.getProperty("user.dir"))
                     .help("Defines the directory where SelecT will create a new working directory. "
                     		+ "If not set, defaults to the current working directory");
 
-
     	parser.addArgument("-ws", "--win_size").type(Double.class).setDefault(0.5)
                     .help("Window size in megabases. If not included, defaults to 0.5 megabases");
-
 
     	//Parsing user-inputed arguments
     	HashMap<String, Object> parsedArgs = new HashMap<String, Object>();
@@ -132,6 +122,13 @@ public class EnviSetup {
             throw new IllegalInputException (log, msg);
         }
 
+    	//require start_chr to be positive
+    	int start_chr = (Integer)parsedArgs.get("start_chr");
+	    if (start_chr < 1) {
+	    	String msg = "Error: Start chromosome must be 1 or greater.";
+	        throw new IllegalInputException(log, msg);
+	    } 
+    	
 	    //default end_chr to start_chr if not set
 	    if (parsedArgs.get("end_chr") == null) {
 	        Object start = parsedArgs.get("start_chr");
