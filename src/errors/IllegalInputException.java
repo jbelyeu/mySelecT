@@ -11,8 +11,8 @@ public class IllegalInputException extends Exception {
 		log.addLine("\n");
 		log.addLine(message);
 		log.addLine("\t*Make sure all arguments are correct" );
-		//TODO: Such API talk
-		log.addLine("\t*Go to api for parameter descriptions");
+		//TODO: Include correct wiki page reference
+		log.addLine("\t*Go to wiki (https://github.com/jbelyeu/mySelecT/wiki) for parameter descriptions");
 	}
 
 }

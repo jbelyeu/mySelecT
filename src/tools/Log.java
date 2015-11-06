@@ -87,10 +87,9 @@ public class Log {
 	public Log(Log.type type, String name) {
 		
 		try {
-			
 			if (type != Log.type.stat) {
-				//TODO: throw new error
-				//TODO: what kind of error should this be?
+				System.out.println("Invalid log type. Should be stat.");
+				throw new Exception();
 			}
 			
 			log_file = new File("stats_" + name + ".log");
@@ -109,7 +108,9 @@ public class Log {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	public void addLine(String args) {
