@@ -35,6 +35,7 @@ public class SetupDriver {
 	private String t_pop;
 	private String x_pop;
 	private String o_pop;
+	private String s_name; //species name
 	
 	//directories and files for accessing and writing data
 	private File data_dir;
@@ -271,7 +272,7 @@ public class SetupDriver {
 		
 		AncestralParser ap = null;
 		if (!anc_path.equals(".:MISSING:.")) {
-			ap = new AncestralParser(anc_path, chr, log);
+			ap = new AncestralParser(anc_path, chr, s_name, log);
 		}
 		
 		//========Import Phased Data===========
@@ -428,6 +429,9 @@ public class SetupDriver {
         log.add(".");
 
         o_pop = (String)args.get("out_pop");
+        log.add(".");
+        
+        s_name = (String)args.get("species");
         log.add(".");
 
         chr_st = (Integer) args.get("start_chr");

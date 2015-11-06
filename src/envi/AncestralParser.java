@@ -18,8 +18,9 @@ public class AncestralParser {
 	private static String EMF_TYPE = "emf";
 	private static String EMF_SEQ = "SEQ";
 	private static String EMF_DATA = "DATA";
-	//TODO: Need to pass species name as a command line param instead of hard-coding it
-	private static String EMF_H_SAPIEN = "homo_sapien";
+	
+	//TODO: DONE. Species passed from command line. Review later
+	private static String EMF_SPECIES_NAME = "homo_sapiens";
 	
 	private boolean skip_first_line;
 	private int chr;
@@ -28,7 +29,9 @@ public class AncestralParser {
 	private Scanner anc_scan;
 	private Log log;
 
-	public AncestralParser (String anc_path, int chr, Log log) throws FileParsingException {
+	public AncestralParser (String anc_path, int chr, String s_name, Log log) throws FileParsingException {
+		
+		AncestralParser.EMF_SPECIES_NAME = s_name.toLowerCase();
 		
 		this.chr = chr;
 		this.anc_path = anc_path;
@@ -82,8 +85,8 @@ public class AncestralParser {
 				if (ln_arr[0].equals(EMF_SEQ)) {
 					num_seq++;
 					
-					//TODO: change name of variable, EMF_H_SAPIEN too specific
-					if (ln_arr[1].contains(EMF_H_SAPIEN) && num_seq == 1) {
+					//TODO: DONE. Review EMF_SPECIES_NAME
+					if (ln_arr[1].contains(EMF_SPECIES_NAME) && num_seq == 1) {
 						st_pos = Integer.parseInt(ln_arr[3]);
 						end_pos = Integer.parseInt(ln_arr[4]);
 					}

@@ -21,6 +21,7 @@ public class EnviSetup {
 	 * @param Required	Genetic Map directory
 	 * @param Required	Start chromosome number
 	 * @param Required	End chromosome number 
+	 * @param Required  Species name
 	 * @param Required	Target Population
 	 * @param Required	Cross Population
 	 * @param Optional	Outgroup Population (-op flag; default is same as cross population)
@@ -72,22 +73,31 @@ public class EnviSetup {
 
     	parser.addArgument("map_dir").type(Arguments.fileType().verifyIsDirectory()
                     .verifyCanRead()).help("Directory with map file");
+    	
     	//TODO: Don't hardcode the number
     	parser.addArgument("start_chr").type(Integer.class).choices(Arguments.range(1, 22))
     				.help("Starting chromosome number");
+    	
     	//TODO: Still don't hardcode the number
     	parser.addArgument("end_chr").type(Integer.class).choices(Arguments.range(1, 22))
     				.help("Ending chromosome number. "
     						+ "Must be equal to or greater than starting chromosome number.");
+    	
+    	//TODO: DONE. Check to see if the species is passed correctly
+    	parser.addArgument("species").type(String.class)
+    				.help("Species name has to "
+    						+ "match the following format: genus_species");
+    	
     	//TODO: Don't hardcode the population name, either
     	parser.addArgument("target_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS", "CLM",
                     "ESN", "ESN", "FIN", "GBR", "GIH","GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL",
                     "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "TST", "YRI").help("Target population");
+    	
     	//TODO: I mean it. Don't hardcode the pop name
     	parser.addArgument("cross_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS", "CLM",
                     "ESN", "ESN", "FIN", "GBR", "GIH","GWD", "IBS", "ITU", "JPT", "KHV", "LWK", "MSL",
                     "MXL", "PEL", "PJL", "PUR", "STU", "TSI", "TST", "YRI").help("Cross population.");
-
+    	
     	//Creating optional arguments
     	//TODO: Seriously? It's the same list. Oh yeah, I did that...
     	parser.addArgument("-op", "--out_pop").choices("ACB", "ASW", "BEB", "CDX", "CEU","CHB", "CHS",
@@ -145,11 +155,23 @@ public class EnviSetup {
 	    	String msg = "Error: Out-group population (-op) is same as target population";
 	        throw new IllegalInputException(log, msg);
 	    }
+	    
+	    //Check if species name is provided and of the correct format
+	    if (parsedArgs.get("species") == null) {
+	    	String msg = "Error: Species name is not provided. "
+	    				+ "Please add genus_species to the list of arguments";
+	    	throw new IllegalInputException(log, msg);
+	    } else if (!((String)parsedArgs.get("species")).matches("\\w+_\\w+")) {
+	    	String msg = "Error: Species name is of the wrong format. "
+	    				+ "The correct format should be: genus_species";
+	    	throw new IllegalInputException(log, msg);
+	    }
     
 	    log.addLine("Working Parameters");
 	    log.addLine("Data Dir:\t\t" + parsedArgs.get("data_dir"));
 	    log.addLine("Map Dir:\t\t" + parsedArgs.get("map_dir"));
 	    log.addLine("Envi Output Dir:\t" + parsedArgs.get("working_dir"));
+	    log.addLine("Species\t\t" + parsedArgs.get("species")); // check to see if this works
 	    log.addLine("Target Pop:\t\t" + parsedArgs.get("target_pop"));
 	    log.addLine("Cross Pop:\t\t" + parsedArgs.get("cross_pop"));
 	    log.addLine("Outgroup Pop:\t\t" + parsedArgs.get("out_pop"));
