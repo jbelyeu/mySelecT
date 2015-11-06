@@ -59,9 +59,6 @@ public class StatsCalc {
 			 log.addLine(arg_map.get("win_num") + "\tNoMemoryError\tinsufficient memory for running this window");
 			 log.close();			 
 		 }
-//		catch (Exception e) {
-//			 log.close();
-//		 }
 	}
 	
 	private static HashMap<String, Object> setupArgs(String[] args) {
@@ -150,7 +147,7 @@ public class StatsCalc {
 			//TODO: include correct wiki page reference
 			err_log.addLine("\t*Go to wiki (https://github.com/jbelyeu/mySelecT/wiki) for more information or run with -h as first parameter for help");
 			err_log.addLine("\t*You will need to redo this entire window--all new data is invalid");
-			
+
 			System.exit(0);
 		}
 		
