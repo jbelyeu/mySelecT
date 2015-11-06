@@ -17,8 +17,11 @@ public class EnviSetup {
 	 * This program sets up the environment needed for stats calculation
 	 * @author Hayden Smith
 	 * 
-	 * @param Required	Phased and Ancestral Data Files Directory Path (.hap/.legend -OR- .vcf)
-	 * @param Required	Genetic Map directory
+	 * @param Required	Phased target population input file (.hap/.legend -OR- .vcf)
+	 * @param Required	Phased cross population input file (.hap/.legend -OR- .vcf)
+	 * @param Optional	Phased outgroup population input file (.hap/.legend -OR- .vcf). 
+	 * 					(-opf flag; default is same as cross population)
+	 * @param Required	Genetic Map input file
 	 * @param Required	Start chromosome number
 	 * @param Required	End chromosome number 
 	 * @param Required	Species name
@@ -68,17 +71,24 @@ public class EnviSetup {
                     .description("Set up the environment for SelecT");
     	
     	//Creating required arguments
-    	parser.addArgument("data_dir").type(Arguments.fileType().verifyIsDirectory()
-                    .verifyCanRead()).help("Directory with data files");
+    	parser.addArgument("target_pop_file").type(Arguments.fileType().verifyIsFile()
+                    .verifyCanRead()).help("Target population input file");
 
-    	parser.addArgument("map_dir").type(Arguments.fileType().verifyIsDirectory()
-                    .verifyCanRead()).help("Directory with map file");
+    	parser.addArgument("cross_pop_file").type(Arguments.fileType().verifyIsFile()
+                    .verifyCanRead()).help("Cross population input file");
     	
-    	//TODO: Don't hardcode the number
+    	parser.addArgument("-opf", "--out_pop_file").type(Arguments.fileType().verifyIsFile()
+    				.verifyCanRead()).help("Outgroup population input file. "
+    									+ "If not provided defaults to cross population");
+    	
+    	parser.addArgument("map_file").type(Arguments.fileType().verifyIsFile()
+    				.verifyCanRead()).help("Genetic map input file");
+    	
+    	//TODO: DONE Review the non-hardcoded number
     	parser.addArgument("start_chr").type(Integer.class).help("Starting chromosome number. "
     			+ "Must be equal to or greater than 1.");
 
-    	//TODO: Still don't hardcode the number
+    	//TODO: DONE Review the non-hardcoded number
     	parser.addArgument("end_chr").type(Integer.class).help("Ending chromosome number. "
     			+ "Must be equal to or greater than starting chromosome number.");
     	
@@ -86,15 +96,18 @@ public class EnviSetup {
     	parser.addArgument("species").type(String.class)
     			.help("Species name has to match the following format: genus_species");
     	
-    	//TODO: Hardcoding removed. Need to include correct wiki page ref
-    	parser.addArgument("target_pop").help("Target population. See wiki at https://github.com/jbelyeu/mySelecT/wiki for details");
+    	//TODO: NOTE Population names can be omitted
+    	//NOTE Might not need population names if given actual input files
+    	parser.addArgument("target_pop_name").type(String.class)
+    			.help("Target population name");
     	
-    	//TODO: Hardcoding removed. Need to include correct wiki page ref
-    	parser.addArgument("cross_pop").help("Cross population. See wiki at https://github.com/jbelyeu/mySelecT/wiki for details");
+    	parser.addArgument("cross_pop_name").type(String.class)
+    			.help("Cross population name");
     	
     	//Creating optional arguments
     	//TODO: Hardcoding removed. Need to include correct wiki page ref
-    	parser.addArgument("-op", "--out_pop").help("Outgroup population. If not included, defaults to equal cross population. "
+    	parser.addArgument("-opn", "--out_pop_name").help("Outgroup population name. "
+    			+ "If not included, defaults to cross population. "
     			+ "See wiki at https://github.com/jbelyeu/mySelecT/wiki for details");
 
     	parser.addArgument("-wd", "--working_dir").type(Arguments.fileType().verifyIsDirectory()
@@ -137,19 +150,50 @@ public class EnviSetup {
 	    	String msg = "Error: End Chromosome comes before start chromosome";
 	        throw new IllegalInputException(log, msg);
 	    }
-	
-	    //default out_pop to cross population if not set otherwise
-	    if (parsedArgs.get("out_pop") == null) {
-	        Object XP = parsedArgs.get("cross_pop");
-	        parsedArgs.put("out_pop", XP);
+	    
+	    //when the outgrop population file is set we should have the outgroup population name
+	    if (parsedArgs.get("out_pop_name") == null
+	     && parsedArgs.get("out_pop_file") != null) {
+	    	String msg = "Out-group population file (-opf) option is set when the "
+	    				+ "out-group population name (-opn) option is NOT set";
+	    	throw new IllegalInputException(log, msg);
 	    }
+	    
+	    //when the outgrop population name is set we should have the outgroup population file
+	    if (parsedArgs.get("out_pop_name") != null
+	     && parsedArgs.get("out_pop_file") == null) {
+	    	String msg = "Out-group population file (-opf) option is NOT se when the "
+	    				+ "out-group population name (-opn) option is set";
+	    	throw new IllegalInputException(log, msg);
+	    }
+	    
+	    //default out_pop_name to cross population if not set otherwise
+	    if (parsedArgs.get("out_pop_name") == null) {
+	        Object XP = parsedArgs.get("cross_pop_name");
+	        parsedArgs.put("out_pop_name", XP);
+	    }
+	    
+	    //default out_pop to cross population if not set otherwise
+	    if (parsedArgs.get("out_pop_file") == null) {
+	        Object XP = parsedArgs.get("cross_pop_file");
+	        parsedArgs.put("out_pop_file", XP);
+	    } 
 	
 	    //make sure the out-group pop and the cross pop are not the same as the target pop
-	    if (parsedArgs.get("cross_pop").equals(parsedArgs.get("target_pop") ) ) {
-	    	String msg = "Error: Cross population is same as target population";
+	    if (parsedArgs.get("cross_pop_file").equals(parsedArgs.get("target_pop_file") ) ) {
+	    	String msg = "Error: Cross population file is same as target population file";
 	        throw new IllegalInputException(log, msg);
-	    } else if (parsedArgs.get("out_pop").equals(parsedArgs.get("target_pop"))) {
-	    	String msg = "Error: Out-group population (-op) is same as target population";
+	    } else if (parsedArgs.get("out_pop_file").equals(parsedArgs.get("target_pop_file"))) {
+	    	String msg = "Error: Out-group population file (-opf) is same as target population file";
+	        throw new IllegalInputException(log, msg);
+	    }
+	    
+	    //make sure the out-group pop name and the cross pop name are not the same as the target pop name
+	    if (parsedArgs.get("cross_pop_name").equals(parsedArgs.get("target_pop_name") ) ) {
+	    	String msg = "Error: Cross population name is same as target population file";
+	        throw new IllegalInputException(log, msg);
+	    } else if (parsedArgs.get("out_pop_name").equals(parsedArgs.get("target_pop_name"))) {
+	    	String msg = "Error: Out-group population name (-opn) is same as target population name";
 	        throw new IllegalInputException(log, msg);
 	    }
 	    
@@ -165,13 +209,16 @@ public class EnviSetup {
 	    }
     
 	    log.addLine("Working Parameters");
-	    log.addLine("Data Dir:\t\t" + parsedArgs.get("data_dir"));
-	    log.addLine("Map Dir:\t\t" + parsedArgs.get("map_dir"));
+	    log.addLine("Target Population File:\t\t" + parsedArgs.get("target_pop_file"));
+	    log.addLine("Cross Population File:\t\t" + parsedArgs.get("cross_pop_file"));
+	    if (!parsedArgs.get("out_pop_file").equals(parsedArgs.get("cross_pop_file")))
+	    	log.addLine("Outgroup Population File:\t\t" + parsedArgs.get("out_pop_file")); 
+	    log.addLine("Genetic Map File:\t\t" + parsedArgs.get("map_file"));
 	    log.addLine("Envi Output Dir:\t" + parsedArgs.get("working_dir"));
-	    log.addLine("Species\t\t" + parsedArgs.get("species")); // check to see if this works
-	    log.addLine("Target Pop:\t\t" + parsedArgs.get("target_pop"));
-	    log.addLine("Cross Pop:\t\t" + parsedArgs.get("cross_pop"));
-	    log.addLine("Outgroup Pop:\t\t" + parsedArgs.get("out_pop"));
+	    log.addLine("Species:\t\t" + parsedArgs.get("species")); // check to see if this works
+	    log.addLine("Target Pop Name:\t\t" + parsedArgs.get("target_pop_name"));
+	    log.addLine("Cross Pop Name:\t\t" + parsedArgs.get("cross_pop_name"));
+	    log.addLine("Outgroup Pop Name:\t\t" + parsedArgs.get("out_pop_name"));
 	    log.addLine("Chr Range:\t\t" + parsedArgs.get("start_chr") + "-" + parsedArgs.get("end_chr"));
 	    log.addLine("Window Size:\t\t" + parsedArgs.get("win_size") + " Mb");
 	

@@ -38,8 +38,10 @@ public class SetupDriver {
 	private String s_name; //species name
 	
 	//directories and files for accessing and writing data
-	private File data_dir;
-	private File map_dir;
+	private String t_pop_file;
+	private String x_pop_file;
+	private String o_pop_file;
+	private String map_file;
 	private File wrk_dir;
 	
 	//target population variables (tp)
@@ -237,14 +239,20 @@ public class SetupDriver {
 		log.addLine("\nLoading referenced data into memory for chromosome " + chr);
 		System.out.println("Loading Data");
 		
-		if (containsVCF(data_dir)){
+		if (typeVCF(t_pop_file.toString(), 
+					x_pop_file.toString(), 
+					o_pop_file.toString())) {
+			
 			runVcfParcers(chr);
 		}
-		else {
-			runHapsLegendParcers(chr);
-		}
+//		else {
+//			runHapsLegendParcers(chr);
+//		}
 	}
 	
+/*
+ * HAP and LEGEND files are not currently supported
+ * 
 	private void runHapsLegendParcers(int chr) throws Exception {
 		
 		//========Find Path Variables========
@@ -294,15 +302,16 @@ public class SetupDriver {
 			anc_types = new ArrayList<Window>();
 		}
 	}
+*/
 	
 	private void runVcfParcers(int chr) throws Exception {
 		
 		//========Find Path Variables==========
-		String tp_vcf_path = getPhasedPath(data_dir, VCF_TYPE, chr, t_pop);
-		String xp_vcf_path = getPhasedPath(data_dir, VCF_TYPE, chr, x_pop);
-		String op_vcf_path = getPhasedPath(data_dir, VCF_TYPE, chr, o_pop);
+		String tp_vcf_path = t_pop_file.toString();//getPhasedPath(data_dir, VCF_TYPE, chr, t_pop);
+		String xp_vcf_path = x_pop_file.toString();//getPhasedPath(data_dir, VCF_TYPE, chr, x_pop);
+		String op_vcf_path = o_pop_file.toString();//getPhasedPath(data_dir, VCF_TYPE, chr, o_pop);
 		
-		String map_path = getMapPath(map_dir, chr);
+		String map_path = map_file.toString();//getMapPath(map_dir, chr);
 		
 		//=====Run Parsers and Save Data=======
 		VcfParser tp_vp = new VcfParser(tp_vcf_path, chr, log);
@@ -327,6 +336,7 @@ public class SetupDriver {
 		anc_types = tp_vp.getAncestralTypes();
 	}
 	
+/*
 	private String getPhasedPath(File dir, String type, int chr, String pop) 
 			throws UnknownFileException {
 		
@@ -388,28 +398,27 @@ public class SetupDriver {
 		String msg = "the issue is with your map data";
 		throw new UnknownFileException(log, dir, msg);
 	}
-	
-	private boolean containsVCF(File dir) {
-		String[] all_files = dir.list();
+*/
+	private boolean typeVCF(String...all_files) {
 		
 		for (int i = 0; i < all_files.length; i++) {
-			if (all_files[i].contains(VCF_TYPE)) {
-				return true;
+			if (!all_files[i].contains(VCF_TYPE)) {
+				return false;
 			}
 		}
 		
-		return false;
+		return true;
 	}
 	
     private void setArgs(HashMap<String, Object> args) throws IllegalInputException, IOException {
         
         log.add("\nParameter Check");
 
-        data_dir = (File) args.get("data_dir");
-        log.add(".");
+//        data_dir = (File) args.get("data_dir");
+//        log.add(".");
 
-        map_dir = (File) args.get("map_dir");
-        log.add(".");
+//        map_dir = (File) args.get("map_dir");
+//        log.add(".");
 
         File temp_wrk_dir = new File(args.get("working_dir") + File.separator + "SelecT_workspace" + File.separator);
         int n = 1;
@@ -421,14 +430,26 @@ public class SetupDriver {
         wrk_dir = new File(temp_wrk_dir.getAbsolutePath() + File.separator + "envi_files" + File.separator);
         wrk_dir.mkdirs();
         log.add(".");
-
-        t_pop = (String)args.get("target_pop");
+        
+        t_pop = (String)args.get("target_pop_name");
         log.add(".");
 
-        x_pop = (String)args.get("cross_pop");
+        x_pop = (String)args.get("cross_pop_name");
         log.add(".");
 
-        o_pop = (String)args.get("out_pop");
+        o_pop = (String)args.get("out_pop_name");
+        log.add(".");
+
+        t_pop_file = ((File)args.get("target_pop_file")).getAbsolutePath();
+        log.add(".");
+
+        x_pop_file = ((File)args.get("cross_pop_file")).getAbsolutePath();
+        log.add(".");
+
+        o_pop_file = ((File)args.get("out_pop_file")).getAbsolutePath();
+        log.add(".");
+        
+        map_file = ((File)args.get("map_file")).getAbsolutePath();
         log.add(".");
         
         s_name = (String)args.get("species");

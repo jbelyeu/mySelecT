@@ -12,7 +12,8 @@ import tools.*;
 
 public class VcfParser {
 	
-	//TODO: is the number 9 significant somehow?
+	//Getting rid of the first 9 columns in the 
+	//	VCF file to only include individuals
 	private final int DEFAULT_COL = 9;
 	
 	private String file_path;
