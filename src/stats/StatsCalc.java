@@ -15,6 +15,7 @@ import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.internal.HelpScreenException;
 import calc.*;
+import errors.IllegalInputException;
 import errors.StatsCalcException;
 import tools.*;
 
@@ -34,12 +35,14 @@ public class StatsCalc {
 	 */
 	public static void main(String[] args) {
 		
-		HashMap<String, Object> arg_map = setupArgs(args);
-		
-		File wrk_dir = (File) arg_map.get("wrk_dir");
-		Log log = new Log(Log.type.stat, wrk_dir.getName());
+		HashMap<String, Object> arg_map = null;
 		
 		try {
+			arg_map = setupArgs(args);
+			
+			File wrk_dir = (File) arg_map.get("wrk_dir");
+			Log log = new Log(Log.type.stat, wrk_dir.getName());
+			
 			System.out.println("Running Window:\t\t" + arg_map.get("win_num"));
 			System.out.println("Chromosome:\t\t" + arg_map.get("chr"));
 			System.out.println("SelecT Workspace:\t" + wrk_dir);
@@ -54,10 +57,11 @@ public class StatsCalc {
 		 } catch(OutOfMemoryError e) {
 			 
 			 log.addLine(arg_map.get("win_num") + "\tNoMemoryError\tinsufficient memory for running this window");
-			 log.close();
-			 
-			 System.exit(0);
-		 } 
+			 log.close();			 
+		 }
+//		catch (Exception e) {
+//			 log.close();
+//		 }
 	}
 	
 	private static HashMap<String, Object> setupArgs(String[] args) {
@@ -72,9 +76,8 @@ public class StatsCalc {
 		
 		parser.addArgument("sim_dir").type(Arguments.fileType().verifyIsDirectory()
                 .verifyCanRead()).help("Directory where simulations are saved");
-		//TODO: hardcoded chromosome number
-		parser.addArgument("chr").type(Integer.class).choices(Arguments.range(1, 22))
-				.help("Chromosome number");
+		//TODO: DONE. Review.
+		parser.addArgument("chr").type(Integer.class).help("Chromosome number. Must be equal to or greater than 1.");
 		
 		parser.addArgument("win_num").type(Integer.class).help("Window number for current analysis");
 		
@@ -144,13 +147,22 @@ public class StatsCalc {
 			
 			Log err_log = new Log(Log.type.stat);
 			err_log.addLine("Error: Could not find specific simulations for analysis");
-			//TODO: What API is this referring to? We should either make such a thing or change the message.
-			err_log.addLine("\t*Go to api for more information or run with -h as first parameter for help");
-			//TODO: This error is a little misleading, I think. I believe the "step" referred to is this window only. Need to check.
-			err_log.addLine("\t*You will need to redo this entire step--all new data is invalid");
+			//TODO: include correct wiki page reference
+			err_log.addLine("\t*Go to wiki (https://github.com/jbelyeu/mySelecT/wiki) for more information or run with -h as first parameter for help");
+			err_log.addLine("\t*You will need to redo this entire window--all new data is invalid");
 			
 			System.exit(0);
 		}
+		
+		//require start_chr to be positive
+    	int chr_num = (Integer)parsedArgs.get("chr");
+	    if (chr_num < 1) {
+    		System.out.println("Fatal error in argument parsing: see log");
+	    	String msg = "Error: Chromosome number must be 1 or greater.";
+	    	Log err_log = new Log(Log.type.stat);
+	    	err_log.addLine(parsedArgs.get("win_num") + msg);
+	    	err_log.close();
+	    }
 		
 		return parsedArgs;
 	}
@@ -185,7 +197,7 @@ public class StatsCalc {
 	private dDAF d;
 	private Fst f;
 	
-	private Log log;
+	private static Log log;
 	
 	public StatsCalc(HashMap<String, Object> argMap, Log log) {
 		

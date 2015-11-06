@@ -30,10 +30,10 @@ public class SignificanceAnalyzer {
 		System.out.println("Starting the final phase of SelecT");
 		
 		Log log = new Log(Log.type.analysis);
-		HashMap<String, Object> arg_map = setupArgs(args);
 		
 		try {
-			
+			HashMap<String, Object> arg_map = setupArgs(args);
+
 			if ((Boolean) arg_map.get("combine_only")) {
 				
 				Combiner c = new Combiner(arg_map, log);
@@ -70,6 +70,8 @@ public class SignificanceAnalyzer {
 				SignificanceAnalyzer sa = new SignificanceAnalyzer(arg_map, c.getAllStats(), log);
 				sa.findSignificantSNPs(run_normalization, ignore_mop, ignore_pop);
 			}
+			System.out.println("\n\nSelecT significance analysis finished!");
+			log.addLine("Significance analysis finished!");
 			 
 		} catch (Exception e) {
 			
@@ -77,17 +79,11 @@ public class SignificanceAnalyzer {
 					+ " Check log output for troubleshooting.");
 			
 			log.addLine("\n\nSelecT Died Prematurely. Error in computation.");
-			
 			e.printStackTrace();
-			//TODO: Should we move the lines like it says? It doesn't say why he didn't.
-			System.exit(1); // alternately, we could remove this and mv the next 2 lines into the try block
-		}	
-		
-		System.out.println("\n\nSelecT significance analysis finished!");
-		log.addLine("Significance analysis finished!");
+		}
 	}
 	
-	private static HashMap<String, Object> setupArgs(String[] args) {
+	private static HashMap<String, Object> setupArgs(String[] args) throws IllegalInputException {
 		
 		ArgumentParser parser = ArgumentParsers.newArgumentParser("SignificanceAnalyzer")
 				.defaultHelp(true)
@@ -96,9 +92,8 @@ public class SignificanceAnalyzer {
 		//Creating required arguments
 		parser.addArgument("wrk_dir").type(Arguments.fileType().verifyIsDirectory()
                 .verifyCanRead()).help("SelecT workspace directory (created in phase 1)");
-		//TODO: chromosome number again
-		parser.addArgument("chr").type(Integer.class).choices(Arguments.range(1, 22))
-				.help("Chromosome number");
+		//TODO: DONE. Review.
+		parser.addArgument("chr").type(Integer.class).help("Chromosome number. Must be equal to or greater than 1.");
 		
 		//Creating optional arguments
 		parser.addArgument("-co", "--combine_only").action(Arguments.storeTrue())
@@ -154,12 +149,19 @@ public class SignificanceAnalyzer {
             Log err_log = new Log(Log.type.stat);
             err_log.addLine("Error: Failed to parse arguments"); 
             err_log.addLine("\t*" + e.getMessage());
-            //TODO: API again. I think the step reference is right this time, but we might want to clarify
-            err_log.addLine("\t*Go to api for more information or run with -h as first parameter for help");
+            //TODO: Include correct wiki page reference
+            err_log.addLine("\t*Go to wiki (https://github.com/jbelyeu/mySelecT/wiki) for more information or run with -h as first parameter for help");
 			err_log.addLine("\t*You will need to redo this entire step--all new data is invalid");
 			
 			System.exit(0);
         }
+		
+		//require start_chr to be positive
+    	int chr_num = (Integer)parsedArgs.get("chr");
+	    if (chr_num < 1) {
+	    	String msg = "Error: Chromosome number must be 1 or greater.";
+	        throw new IllegalInputException(log, msg);
+	    }
 		
 		return parsedArgs;
 	}
@@ -169,7 +171,7 @@ public class SignificanceAnalyzer {
 	private File out_file;
 	private List<WindowStats> all_ws;
 	
-	private Log log;
+	private static Log log;
 	
 	public SignificanceAnalyzer(HashMap<String, Object> arg_map, List<WindowStats> all_ws, Log log) {
 		
