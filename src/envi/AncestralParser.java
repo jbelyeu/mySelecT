@@ -60,13 +60,16 @@ public class AncestralParser {
 		if (anc_path.contains(LEGEND_TYPE)) {
 			anc_types = parseLegendFile();
 		}
-		else if(anc_path.contains(EMF_TYPE)) {
-			anc_types = parseEmfFile();
+		else if (anc_path.contains(EMF_TYPE)) {
+			//anc_types = parseEmfFile();
+			String msg = "Error: EMF file functionality is not currently supported";
+			throw new FileParsingException(log, msg);
 		}
 		
 		return anc_types;
 	}
 	
+	@SuppressWarnings("unused")
 	private List<Window> parseEmfFile() throws FileParsingException {
 		
 		List<Window> anc_types = new ArrayList<Window>();
@@ -85,7 +88,6 @@ public class AncestralParser {
 				if (ln_arr[0].equals(EMF_SEQ)) {
 					num_seq++;
 					
-					//TODO: DONE. Review EMF_SPECIES_NAME
 					if (ln_arr[1].contains(EMF_SPECIES_NAME) && num_seq == 1) {
 						st_pos = Integer.parseInt(ln_arr[3]);
 						end_pos = Integer.parseInt(ln_arr[4]);
@@ -119,7 +121,7 @@ public class AncestralParser {
 				int cntG = 0;
 				int cntC = 0;
 				
-				for(int i = 0; i < num_anc_seq; i++) {
+				for (int i = 0; i < num_anc_seq; i++) {
 					
 					int seq_indx = 1 + i*2;
 					if (seq_indx > line.length()) {
@@ -161,7 +163,6 @@ public class AncestralParser {
 						anc_types.add(w);
 					}
 				}
-				//TODO: Why only when human allele? Seems weird when hardcoding for humans...
 				//increase only when you have a human allele
 				line_num++;
 			}
@@ -251,8 +252,7 @@ public class AncestralParser {
 	private void checkLegendFile() throws FileParsingException {
 		
 		try (Scanner temp_scan = new Scanner(new File(anc_path))) {
-			//TODO: We might also ask why we're skipping. That's another question
-			//to check the first line; to skip or not to skip, that is the question
+			//Skip first line if it contains header data
 			String first_line = temp_scan.nextLine();
 			String[] first_line_arr = first_line.split("\\s+");
 			if (first_line_arr[1].contains("pos")) {
