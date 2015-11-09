@@ -395,7 +395,7 @@ public class SetupDriver {
 			if (file_name.contains(chr_check) && file_name.charAt(0) != '.') {
 				return dir.getAbsolutePath() + File.separator + file_name;
 			}
-		}
+		}e
 		
 		String msg = "the issue is with your map data";
 		throw new UnknownFileException(log, dir, msg);
