@@ -148,8 +148,8 @@ public class PhasedParser {
 		while (ph_scan.hasNextLine()) {
 			
 			Individual indv = new Individual(id_index, chr);
-			String strand1 = ph_scan.nextLine();
-			String strand2 = ph_scan.nextLine();
+			String strand1 = ph_scan.nextLine().trim();
+			String strand2 = ph_scan.nextLine().trim();
 			
 			if (strand1.length() == strand2.length()) {
 				Scanner str1 = new Scanner(strand1);
