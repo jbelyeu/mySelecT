@@ -104,6 +104,10 @@ public class EnviSetup {
     	parser.addArgument("cross_pop_name").type(String.class)
     			.help("Cross population name");
     	
+    	//allow user to specify which input file holds the ancestral data
+    	parser.addArgument("anc_data_loc").type(String.class)
+		.help("Ancestral data location").choices("target","cross","out");
+    	
     	//Creating optional arguments
     	//TODO: Hardcoding removed. Need to include correct wiki page ref
     	parser.addArgument("-opn", "--out_pop_name").help("Outgroup population name. "
@@ -162,7 +166,7 @@ public class EnviSetup {
 	    //when the outgrop population name is set we should have the outgroup population file
 	    if (parsedArgs.get("out_pop_name") != null
 	     && parsedArgs.get("out_pop_file") == null) {
-	    	String msg = "Out-group population file (-opf) option is NOT se when the "
+	    	String msg = "Out-group population file (-opf) option is NOT set when the "
 	    				+ "out-group population name (-opn) option is set";
 	    	throw new IllegalInputException(log, msg);
 	    }
@@ -188,6 +192,12 @@ public class EnviSetup {
 	        throw new IllegalInputException(log, msg);
 	    }
 	    
+	    //if no outgroup file was selected, but the outgroup file was chosen as location for ancestral data, throw error
+	    if (parsedArgs.get("anc_data_loc").equals("out") && parsedArgs.get("out_pop_file") == null) {
+	    	String msg = "Error: Outgroup file selected as location of ancestral data, but no outgroup file given.";
+	        throw new IllegalInputException(log, msg);
+	    }
+	    
 	    //make sure the out-group pop name and the cross pop name are not the same as the target pop name
 	    if (parsedArgs.get("cross_pop_name").equals(parsedArgs.get("target_pop_name") ) ) {
 	    	String msg = "Error: Cross population name is same as target population file";
@@ -207,20 +217,21 @@ public class EnviSetup {
 	    				+ "The correct format should be: genus_species";
 	    	throw new IllegalInputException(log, msg);
 	    }
-    
+	        
 	    log.addLine("Working Parameters");
 	    log.addLine("Target Population File:\t\t" + parsedArgs.get("target_pop_file"));
 	    log.addLine("Cross Population File:\t\t" + parsedArgs.get("cross_pop_file"));
 	    if (!parsedArgs.get("out_pop_file").equals(parsedArgs.get("cross_pop_file")))
-	    	log.addLine("Outgroup Population File:\t\t" + parsedArgs.get("out_pop_file")); 
-	    log.addLine("Genetic Map File:\t\t" + parsedArgs.get("map_file"));
-	    log.addLine("Envi Output Dir:\t" + parsedArgs.get("working_dir"));
-	    log.addLine("Species:\t\t" + parsedArgs.get("species")); // check to see if this works
-	    log.addLine("Target Pop Name:\t\t" + parsedArgs.get("target_pop_name"));
-	    log.addLine("Cross Pop Name:\t\t" + parsedArgs.get("cross_pop_name"));
-	    log.addLine("Outgroup Pop Name:\t\t" + parsedArgs.get("out_pop_name"));
-	    log.addLine("Chr Range:\t\t" + parsedArgs.get("start_chr") + "-" + parsedArgs.get("end_chr"));
-	    log.addLine("Window Size:\t\t" + parsedArgs.get("win_size") + " Mb");
+	    	log.addLine("Outgroup Population File:\t" + parsedArgs.get("out_pop_file")); 
+	    log.addLine("Genetic Map File:\t\t\t" + parsedArgs.get("map_file"));
+	    log.addLine("Envi Output Dir:\t\t\t" + parsedArgs.get("working_dir"));
+	    log.addLine("Species:\t\t\t\t\t" + parsedArgs.get("species")); // check to see if this works
+	    log.addLine("Target Pop Name:\t\t\t" + parsedArgs.get("target_pop_name"));
+	    log.addLine("Cross Pop Name:\t\t\t\t" + parsedArgs.get("cross_pop_name"));
+	    log.addLine("Outgroup Pop Name:\t\t\t" + parsedArgs.get("out_pop_name"));
+	    log.addLine("Ancestral Data Location:\t" + parsedArgs.get("anc_data_loc"));
+	    log.addLine("Chr Range:\t\t\t\t\t" + parsedArgs.get("start_chr") + "-" + parsedArgs.get("end_chr"));
+	    log.addLine("Window Size:\t\t\t\t" + parsedArgs.get("win_size") + " Mb");
 	
 	    return parsedArgs;
     }

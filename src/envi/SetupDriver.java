@@ -70,6 +70,12 @@ public class SetupDriver {
 	private GeneticMap genMap;
 	private List<Window> anc_types;
 	
+	//location of ancestral data
+	private String anc_data_loc;
+	final private String target = "target";
+	final private String cross = "cross";
+	final private String outgroup = "out";
+	
 	//progress log
 	private Log log;
 
@@ -335,7 +341,16 @@ public class SetupDriver {
 		
 		//=======Import Environment Data========
 		genMap = mp.parseGeneMap();
-		anc_types = tp_vp.getAncestralTypes();
+		//TODO: Done, test it
+		if (this.anc_data_loc.equals(this.target)) {
+			anc_types = tp_vp.getAncestralTypes();
+		}
+		else if (this.anc_data_loc.equals(this.cross)) {
+			anc_types = xp_vp.getAncestralTypes();
+		}
+		else if (this.anc_data_loc.equals(this.outgroup)) {
+			anc_types = op_vp.getAncestralTypes();
+		}
 	}
 	
 /*
@@ -440,6 +455,9 @@ public class SetupDriver {
         log.add(".");
 
         o_pop = (String)args.get("out_pop_name");
+        log.add(".");
+        
+        this.anc_data_loc = (String)args.get("anc_data_loc");
         log.add(".");
 
         t_pop_file = ((File)args.get("target_pop_file")).getAbsolutePath();
