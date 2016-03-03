@@ -2,33 +2,38 @@ package envi;
 
 import java.util.HashMap;
 
-import envi.SetupDriver;
 import errors.IllegalInputException;
-import tools.Log;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.internal.HelpScreenException;
+import tools.Log;
 
+/*
+ * @author Hayden Smith
+ * Hyper-Parallelized Composite of Multiple Signals (CMS) Java implementation GWAS and Local study version 1.0
+ * This program sets up the environment needed for stats calculation.  
+ */
 public class EnviSetup {
 
-	/** Hyper-Parallelized Composite of Multiple Signals (CMS) Java implementation GWAS and Local study version 1.0
-	 * This program sets up the environment needed for stats calculation
-	 * @author Hayden Smith
+	/** 
+
+	 * It reads in the files and args provided, validates them (simple readability and logic checks), then
+	 * creates an instance of the SetupDriver class to generate the running environment. Outputs are written to a log.
 	 * 
-	 * @param Required	Phased target population input file (.hap/.legend -OR- .vcf)
-	 * @param Required	Phased cross population input file (.hap/.legend -OR- .vcf)
-	 * @param Optional	Phased outgroup population input file (.hap/.legend -OR- .vcf). 
-	 * 					(-opf flag; default is same as cross population)
+	 * @param Required	Phased target population input file in VCF format
+	 * @param Required	Phased cross population input file in VCF format
 	 * @param Required	Genetic Map input file
 	 * @param Required	Start chromosome number
-	 * @param Required	End chromosome number 
+	 * @param Required	End chromosome number
 	 * @param Required	Species name
 	 * @param Required	Target Population
 	 * @param Required	Cross Population
-	 * @param Optional	Outgroup Population (-op flag; default is same as cross population)
-	 * @param Optional	Place for SelecT workspace (-wd flag; default is current directory)
+	 * 
+	 * @param Optional	Phased outgroup population input file in VCF format (-op flag, default is same as cross population)
+	 * @param Optional	Outgroup population name
+	 * @param Optional	Path for SelecT workspace (-wd flag, default is current directory)
 	 * @param Optional	Window Size in Mb (-ws flag; default is 0.5Mb)
 	 */
 	public static void main(String[] args) {
@@ -62,65 +67,11 @@ public class EnviSetup {
 			e.printStackTrace();
 		}
 	}
-	
+
     private static HashMap<String, Object> setupArgs(String[] args, Log log)
             throws IllegalInputException {
 
-    	ArgumentParser parser = ArgumentParsers.newArgumentParser("EnviSetup")
-    				.defaultHelp(true)
-                    .description("Set up the environment for SelecT");
-    	
-    	//Creating required arguments
-    	parser.addArgument("target_pop_file").type(Arguments.fileType().verifyIsFile()
-                    .verifyCanRead()).help("Target population input file");
-
-    	parser.addArgument("cross_pop_file").type(Arguments.fileType().verifyIsFile()
-                    .verifyCanRead()).help("Cross population input file");
-    	
-    	parser.addArgument("-opf", "--out_pop_file").type(Arguments.fileType().verifyIsFile()
-    				.verifyCanRead()).help("Outgroup population input file. "
-    									+ "If not provided defaults to cross population");
-    	
-    	parser.addArgument("map_file").type(Arguments.fileType().verifyIsFile()
-    				.verifyCanRead()).help("Genetic map input file");
-    	
-    	//TODO: DONE Review the non-hardcoded number
-    	parser.addArgument("start_chr").type(Integer.class).help("Starting chromosome number. "
-    			+ "Must be equal to or greater than 1.");
-
-    	//TODO: DONE Review the non-hardcoded number
-    	parser.addArgument("end_chr").type(Integer.class).help("Ending chromosome number. "
-    			+ "Must be equal to or greater than starting chromosome number.");
-    	
-    	//TODO: DONE. Check to see if the species is passed correctly
-    	parser.addArgument("species").type(String.class)
-    			.help("Species name has to match the following format: genus_species");
-    	
-    	//TODO: NOTE Population names can be omitted
-    	//NOTE Might not need population names if given actual input files
-    	parser.addArgument("target_pop_name").type(String.class)
-    			.help("Target population name");
-    	
-    	parser.addArgument("cross_pop_name").type(String.class)
-    			.help("Cross population name");
-    	
-    	//allow user to specify which input file holds the ancestral data
-    	parser.addArgument("anc_data_loc").type(String.class)
-		.help("Ancestral data location").choices("target","cross","out");
-    	
-    	//Creating optional arguments
-    	//TODO: Hardcoding removed. Need to include correct wiki page ref
-    	parser.addArgument("-opn", "--out_pop_name").help("Outgroup population name. "
-    			+ "If not included, defaults to cross population. "
-    			+ "See wiki at https://github.com/jbelyeu/mySelecT/wiki for details");
-
-    	parser.addArgument("-wd", "--working_dir").type(Arguments.fileType().verifyIsDirectory()
-                    .verifyCanRead()).setDefault(System.getProperty("user.dir"))
-                    .help("Defines the directory where SelecT will create a new working directory. "
-                    		+ "If not set, defaults to the current working directory");
-
-    	parser.addArgument("-ws", "--win_size").type(Double.class).setDefault(0.5)
-                    .help("Window size in megabases. If not included, defaults to 0.5 megabases");
+    	ArgumentParser parser = buildArgParser();
 
     	//Parsing user-inputed arguments
     	HashMap<String, Object> parsedArgs = new HashMap<String, Object>();
@@ -221,8 +172,9 @@ public class EnviSetup {
 	    log.addLine("Working Parameters");
 	    log.addLine("Target Population File:\t\t" + parsedArgs.get("target_pop_file"));
 	    log.addLine("Cross Population File:\t\t" + parsedArgs.get("cross_pop_file"));
-	    if (!parsedArgs.get("out_pop_file").equals(parsedArgs.get("cross_pop_file")))
-	    	log.addLine("Outgroup Population File:\t" + parsedArgs.get("out_pop_file")); 
+	    if (!parsedArgs.get("out_pop_file").equals(parsedArgs.get("cross_pop_file"))) {
+			log.addLine("Outgroup Population File:\t" + parsedArgs.get("out_pop_file"));
+		} 
 	    log.addLine("Genetic Map File:\t\t\t" + parsedArgs.get("map_file"));
 	    log.addLine("Envi Output Dir:\t\t\t" + parsedArgs.get("working_dir"));
 	    log.addLine("Species:\t\t\t\t\t" + parsedArgs.get("species")); // check to see if this works
@@ -234,5 +186,66 @@ public class EnviSetup {
 	    log.addLine("Window Size:\t\t\t\t" + parsedArgs.get("win_size") + " Mb");
 	
 	    return parsedArgs;
+    }
+    
+    private static ArgumentParser buildArgParser() {
+    	
+    	ArgumentParser parser = ArgumentParsers.newArgumentParser("EnviSetup")
+				.defaultHelp(true)
+                .description("Set up the environment for SelecT");
+	
+		//Creating required arguments
+		parser.addArgument("target_pop_file").type(Arguments.fileType().verifyIsFile()
+	                .verifyCanRead()).help("Target population input file");
+	
+		parser.addArgument("cross_pop_file").type(Arguments.fileType().verifyIsFile()
+	                .verifyCanRead()).help("Cross population input file");
+		
+		parser.addArgument("-opf", "--out_pop_file").type(Arguments.fileType().verifyIsFile()
+					.verifyCanRead()).help("Outgroup population input file. "
+										+ "If not provided defaults to cross population");
+		
+		parser.addArgument("map_file").type(Arguments.fileType().verifyIsFile()
+					.verifyCanRead()).help("Genetic map input file");
+		
+		//TODO: DONE Review the non-hardcoded number
+		parser.addArgument("start_chr").type(Integer.class).help("Starting chromosome number. "
+				+ "Must be equal to or greater than 1.");
+	
+		//TODO: DONE Review the non-hardcoded number
+		parser.addArgument("end_chr").type(Integer.class).help("Ending chromosome number. "
+				+ "Must be equal to or greater than starting chromosome number.");
+		
+		//TODO: DONE. Check to see if the species is passed correctly
+		parser.addArgument("species").type(String.class)
+				.help("Species name has to match the following format: genus_species");
+		
+		//TODO: NOTE Population names can be omitted
+		//NOTE Might not need population names if given actual input files
+		parser.addArgument("target_pop_name").type(String.class)
+				.help("Target population name");
+		
+		parser.addArgument("cross_pop_name").type(String.class)
+				.help("Cross population name");
+		
+		//allow user to specify which input file holds the ancestral data
+		parser.addArgument("anc_data_loc").type(String.class)
+		.help("Ancestral data location").choices("target","cross","out");
+		
+		//Creating optional arguments
+		//TODO: Hardcoding removed. Need to include correct wiki page ref
+		parser.addArgument("-opn", "--out_pop_name").help("Outgroup population name. "
+				+ "If not included, defaults to cross population. "
+				+ "See wiki at https://github.com/jbelyeu/mySelecT/wiki for details");
+	
+		parser.addArgument("-wd", "--working_dir").type(Arguments.fileType().verifyIsDirectory()
+	                .verifyCanRead()).setDefault(System.getProperty("user.dir"))
+	                .help("Defines the directory where SelecT will create a new working directory. "
+	                		+ "If not set, defaults to the current working directory");
+	
+		parser.addArgument("-ws", "--win_size").type(Double.class).setDefault(0.5)
+	                .help("Window size in megabases. If not included, defaults to 0.5 megabases");
+    	
+		return parser;
     }
 }

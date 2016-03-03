@@ -7,6 +7,12 @@ import tools.Individual;
 import tools.SNP;
 import tools.Window;
 
+/*
+ * Performs intersections of the populations to find overlapping positions between all three populations.
+ * Populations are compared by position and not variantID except in cases of irregular data types.
+ * The overlapping is used for deltaDAF, XPEHH, and Fst, which compare target populations to cross
+ * populations and therefore require the overlap locations.
+ */
 public class PopIntersector {
 	
 	//intersection of target and cross populations (txin)
@@ -19,6 +25,9 @@ public class PopIntersector {
 	private Individual[] xp_ino_indv;
 	private Individual[] op_inx_indv;
 	
+	/*
+	 * Simple constructor for PopIntersector class
+	 */
 	public PopIntersector() {
 		
 		txin_wins = null;
@@ -30,6 +39,13 @@ public class PopIntersector {
 		op_inx_indv = null;
 	}
 
+	/*
+	 * Performs intersection between the target population and the cross population.
+	 * Inputs are lists of Windows for the target and cross populations, 
+	 * as well as arrays of individuals. The function creates new Individual 
+	 * arrays from the inputs for the intersects and calls functions to compare the 
+	 * populations to each other
+	 */
 	public void intersectCrossWithTargetPopulations(List<Window> tp_wins, 
 												List<Window> xp_wins,
 												Individual[] tp_indv, 
@@ -38,6 +54,7 @@ public class PopIntersector {
 		Individual[] xp_indv_intersect = new Individual[xp_indv.length];
 		Individual[] tp_indv_intersect = new Individual[tp_indv.length];
 		
+		//TODO: isn't it inefficient to copy the individuals like this?
 		for (int i = 0; i < xp_indv_intersect.length; i++) {
 			xp_indv_intersect[i] = new Individual(xp_indv[i].getID(), xp_indv[i].getChr());
 		}
@@ -80,26 +97,44 @@ public class PopIntersector {
 		op_inx_indv = op_indv_intersect;
 	}
 	
+	/*
+	 * Gets the target population-by-cross population intersection windows
+	 */
 	public List<Window> getTargetXCrossWins() {
 		return txin_wins;
 	}
 
+	/*
+	 * Gets the target population-by-cross population intersection individuals
+	 */
 	public Individual[] getTargetXCrossIndv() {
 		return tp_inx_indv;
 	}
 
+	/*
+	 * Gets the cross population-by-target population intersection individuals
+	 */
 	public Individual[] getCrossXTargetIndv() {
 		return xp_int_indv;
 	}
 
+	/*
+	 * Gets the cross population-by-outgroup population intersection windows
+	 */
 	public List<Window> getCrossXOutWins() {
 		return xoin_wins;
 	}
 
+	/*
+	 * Gets the cross population-by-outgroup population intersection individuals
+	 */
 	public Individual[] getCrossXOutIndv() {
 		return xp_ino_indv;
 	}
 
+	/*
+	 * Gets the outgroup population-by-cross population intersection individuals
+	 */
 	public Individual[] getOutXCrossIndv() {
 		return op_inx_indv;
 	}
