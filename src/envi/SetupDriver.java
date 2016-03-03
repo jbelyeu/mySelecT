@@ -6,24 +6,26 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import errors.IllegalInputException;
-import errors.UnknownFileException;
 import tools.GeneticMap;
 import tools.Individual;
 import tools.Log;
 import tools.Window;
 
+
+/*
+ * Driver to create the environment for running SelecT.
+ */
 public class SetupDriver {
 
 	private static int MEGABASE_CONVERSION = 1000000;
-	private static String LEGEND_TYPE = ".legend";
-	private static String EMF_TYPE = "emf";
-	private static String ANCESTRAL_TYPE = "ancestral";
-	private static String HAP_TYPE = ".hap";
+//	private static String LEGEND_TYPE = ".legend";
+//	private static String EMF_TYPE = "emf";
+//	private static String ANCESTRAL_TYPE = "ancestral";
+//	private static String HAP_TYPE = ".hap";
 	private static String VCF_TYPE = ".vcf";
 	
 	private boolean run_intersect = true;
@@ -79,6 +81,12 @@ public class SetupDriver {
 	//progress log
 	private Log log;
 
+	/*
+	 * Create SetupDriver instance.
+	 * 
+	 * @param arg_map map of the arguments (argument names -> argument values)
+	 * @Param Log Log file to write runtime information
+	 */
 	public SetupDriver(HashMap<String, Object> arg_map, Log log) throws Exception {
 		
 		this.log = log;
@@ -86,6 +94,10 @@ public class SetupDriver {
 		setArgs(arg_map);
 	}
 	
+	/*
+	 * Runs the setup processes. Specifically, parses the input files using VcfParser instances,
+	 * uses PopIntersector to intersect the populations, then writes out the results into the workspace.
+	 */
 	public void runSetup() throws Exception {
 		
 		for (int i = chr_st; i <= chr_end; i++) {
