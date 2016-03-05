@@ -2,6 +2,10 @@ package tools;
 
 import java.util.LinkedList;
 
+/*
+ * ExtendedHaplotype stores a haplotype as a list of IDStrands.
+ * The IDStrand is a wrapper containing a TODO
+ */
 public class ExtendedHaplotype {
 
 	/*
