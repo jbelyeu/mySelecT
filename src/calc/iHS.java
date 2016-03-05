@@ -20,7 +20,7 @@ public class iHS extends HaplotypeTests {
 	private ExtendedHaplotype der_eh;
 	private List<Window> all_win;
 	private List<Window> anc_types;
-	private GeneticMap gm;
+	private GeneticMap geneticMap;
 	
 	//Simulations
 	private SimDist neut_sim;
@@ -61,7 +61,7 @@ public class iHS extends HaplotypeTests {
 		
 		this.win = win;
 		this.individuals = individuals;
-		this.gm = gm;
+		this.geneticMap = gm;
 		this.neut_sim = neut_sim;
 		this.sel_sim = sel_sim;
 		
@@ -256,8 +256,8 @@ public class iHS extends HaplotypeTests {
 			int[] ehh_pos_der = der_ehh.getEhhPositions();
 			
 			//find the area under the curve created by the EHH data
-			double anc_ihh = integrateEhhValues(ehh_values_anc, ehh_pos_anc, core_snp, gm);
-			double der_ihh = integrateEhhValues(ehh_values_der, ehh_pos_der, core_snp, gm);
+			double anc_ihh = integrateEhhValues(ehh_values_anc, ehh_pos_anc, core_snp, geneticMap);
+			double der_ihh = integrateEhhValues(ehh_values_der, ehh_pos_der, core_snp, geneticMap);
 			
 			//main iHS function; unstandardized
 			unstd_iHS = Math.log(anc_ihh / der_ihh);

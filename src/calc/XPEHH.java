@@ -19,7 +19,7 @@ public class XPEHH extends HaplotypeTests {
 	private Window win;
 	private Individual[] tp_individuals;//target population (tp) intersected with the cross population
 	private Individual[] xp_individuals;//cross population (xp) intersected with the target population
-	private GeneticMap gm;
+	private GeneticMap geneticMap;
 	private List<Window> all_win;
 	
 	//Simulations
@@ -60,7 +60,7 @@ public class XPEHH extends HaplotypeTests {
 		this.win = win;
 		this.tp_individuals = tp_individuals;
 		this.xp_individuals = xp_individuals;
-		this.gm = gm;
+		this.geneticMap = gm;
 		this.neut_sim = neut_sim;
 		this.sel_sim = sel_sim;
 		
@@ -226,7 +226,7 @@ public class XPEHH extends HaplotypeTests {
 		double[] ehh_vals = pop_ehh.getEhhValues();
 		int[] ehh_pos = pop_ehh.getEhhPositions();
 		
-		return integrateEhhValues(ehh_vals, ehh_pos, core_snp, gm);
+		return integrateEhhValues(ehh_vals, ehh_pos, core_snp, geneticMap);
 	}
 	
 	private EHH getCombinedEHH(Individual[] all_indv, SNP core_snp) {
