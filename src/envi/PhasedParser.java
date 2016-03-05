@@ -7,11 +7,14 @@ import java.util.List;
 import java.util.Scanner;
 
 import errors.FileParsingException;
-import tools.Log;
 import tools.Individual;
+import tools.Log;
 import tools.SNP;
 import tools.Window;
 
+/*
+ * Parses phased HapMap legend files, not used in current implementation of SelecT.
+ */
 public class PhasedParser {
 	
 	private static int TEST_LINES = 10; //for testing the first 10 lines of a file to ensure it is the right format
@@ -123,8 +126,9 @@ public class PhasedParser {
 		
 		List<SNP> win_snps = cur_win.getSNPs();
 		for (int i = 0; i < win_snps.size(); i++) {
-			if (win_snps.get(i).sameAs(new_snp))
+			if (win_snps.get(i).sameAs(new_snp)) {
 				return true;
+			}
 		}
 		return false;
 	}

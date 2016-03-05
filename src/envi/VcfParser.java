@@ -7,13 +7,19 @@ import java.util.List;
 import java.util.Scanner;
 
 import errors.FileParsingException;
-import tools.*;
+import tools.Individual;
+import tools.Log;
+import tools.SNP;
+import tools.Window;
 
-
+/*
+ * VcfParser is used to parser input VCF files with population data for SelecT run.
+ * Data parsed includes individuals, windows, and ancestral types
+ */
 public class VcfParser {
 	
 	//Getting rid of the first 9 columns in the 
-	//	VCF file to only include individuals
+	//VCF file to only include individuals
 	private final int DEFAULT_COL = 9;
 	
 	private String file_path;
@@ -23,6 +29,9 @@ public class VcfParser {
 	private Individual[] individuals;
 	private Log log;
 	
+	/*
+	 * Simple constructor
+	 */
 	public VcfParser()
 	{
 		file_path = null; 
@@ -33,6 +42,12 @@ public class VcfParser {
 		log = null; 
 	}
 	
+	/*
+	 * Constructor with inputs 
+	 * 
+	 * @param file_path path to the VCF file that will be parsed
+	 * @param log a simple log file to record how the parsing goes
+	 */
 	public VcfParser(String file_path, int chr, Log log)
 	{
 		this.file_path = file_path; 
@@ -44,6 +59,13 @@ public class VcfParser {
 		ancestral = new ArrayList<Window>();
 	}
 	
+	/*
+	 * Parses the VCF file and stores the resulting data 
+	 * (individuals, ancestral data, and windows) as members of the VcfParser
+	 * 
+	 * @param win_size how many bases to include in each window
+	 * @param anc_data whether or not this file contains ancestral data
+	 */
 	public void parseVCF(int win_size, boolean anc_data) throws FileParsingException {
 		log.addLine("Importing VCF data from " +  file_path);
 		
@@ -93,8 +115,9 @@ public class VcfParser {
 						windows.add(cur_win);
 					}
 					
-					if (anc_data && !anc_win.equals(new Window()))
+					if (anc_data && !anc_win.equals(new Window())) {
 						ancestral.add(anc_win);
+					}
 					
 					while (pos >= (start_pos + win_size)) {
 						start_pos += win_size;
@@ -103,8 +126,9 @@ public class VcfParser {
 					
 		    		cur_win = new Window(start_pos, end_pos, index);
 		    		
-		    		if (anc_data) 
-			    		anc_win = new Window(start_pos, end_pos, index);
+		    		if (anc_data) {
+						anc_win = new Window(start_pos, end_pos, index);
+					}
 				}
 				
 				if (ln[4].contains(",")) {
@@ -292,14 +316,23 @@ public class VcfParser {
 		return aa_arr[0].toUpperCase();
 	}
 	
+	/*
+	 * Gets the windows generated from the parsed VCF file
+	 */
 	public List<Window> getWindows() {
 		return windows; 
 	}
 	
+	/*
+	 * Gets the ancestral data generated from the parsed VCF file 
+	 */
 	public List<Window> getAncestralTypes() {
 		return ancestral;
 	}
 	
+	/*
+	 * Gets the individuals generated from the parsed VCF file
+	 */
 	public Individual[] getIndividuals() {
 		return individuals; 
 	}

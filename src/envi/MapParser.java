@@ -5,9 +5,13 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import errors.FileParsingException;
-import tools.Log;
 import tools.GeneticMap;
+import tools.Log;
 
+/*
+ * MapParser parses the genetic linkage map file that is required for calculating 
+ * haplotype-based statistics.
+ */
 public class MapParser {
 	
 	private static int TEST_LINES = 10; //for testing the first 10 lines of a file to ensure it is the right format
@@ -18,6 +22,12 @@ public class MapParser {
 	private Scanner map_scan;
 	private Log log;
 	
+	/*
+	 * Constructor with fields. 
+	 * 
+	 * @param map_file path to the linkage map file 
+	 * @param log 
+	 */
 	public MapParser(String map_file, Log log) throws FileParsingException {
 		
 		this.map_path = map_file;
@@ -111,8 +121,9 @@ public class MapParser {
 			String first_line = temp_scan.nextLine();
 			String[] first_line_arr = first_line.split("\\s+");
 			
-			if (!first_line_arr[0].matches("[0-9]+"))
+			if (!first_line_arr[0].matches("[0-9]+")) {
 				skip_first_line = true;
+			}
 			
 			for (int i = 0; i < TEST_LINES; i++) {
 				String line = temp_scan.nextLine();

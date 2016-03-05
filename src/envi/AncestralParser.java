@@ -7,13 +7,19 @@ import java.util.List;
 import java.util.Scanner;
 
 import errors.FileParsingException;
+import tools.Log;
 import tools.SNP;
 import tools.Window;
-import tools.Log;
 
+/*
+ * AncestralParser is used for parsing out ancestral data not 
+ * included as part of a VCF. This functionality is not currently used; 
+ * ancestral data must be included in one of the VCFs.
+ */
 public class AncestralParser {
 	
-	private static int TEST_LINES = 10; //for testing the first 10 lines of a file to ensure it is the right format
+	//for testing the first 10 lines of a file to ensure it is the right format
+	private static int TEST_LINES = 10; 
 	private static String LEGEND_TYPE = "legend";
 	private static String EMF_TYPE = "emf";
 	private static String EMF_SEQ = "SEQ";
