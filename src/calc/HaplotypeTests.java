@@ -177,7 +177,7 @@ public abstract class HaplotypeTests {
 		return eh;
 	}
  	
-	protected double integrateEhhValues(double[] ehh_vals, int[] ehh_pos, SNP core_snp, GeneticMap gm) {
+	protected double integrateEhhValues(double[] ehh_vals, int[] ehh_pos, SNP core_snp, GeneticMap geneticMap) {
 		
 		int core_snp_pos = core_snp.getPosition();
 		int core_index = -1;
@@ -193,7 +193,7 @@ public abstract class HaplotypeTests {
 		double ihh_lft = 0.0;
 		for (int i = core_index - 1; i >= 0; i--) {
 			
-			double rate = gm.getRecombRate(ehh_pos[i+1], ehh_pos[i]);
+			double rate = geneticMap.getRecombRate(ehh_pos[i+1], ehh_pos[i]);
 			
 			int dist = ehh_pos[i+1] - ehh_pos[i];
 			
@@ -205,7 +205,7 @@ public abstract class HaplotypeTests {
 		double ihh_rt = 0.0;
 		for (int i = core_index + 1; i < ehh_pos.length; i++) {
 			
-			double rate = gm.getRecombRate(ehh_pos[i], ehh_pos[i-1]);
+			double rate = geneticMap.getRecombRate(ehh_pos[i], ehh_pos[i-1]);
 			
 			int dist = ehh_pos[i] - ehh_pos[i-1];
 			
