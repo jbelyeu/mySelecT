@@ -335,17 +335,17 @@ public class SetupDriver {
 		
 		//=====Run Parsers and Save Data=======
 		VcfParser tp_vp = new VcfParser(tp_vcf_path, chr, log);
-		tp_vp.parseVCF(win_size, true);
+		tp_vp.parseVCF(win_size, this.anc_data_loc.equals(this.target));
 		tp_wins = tp_vp.getWindows();
 		tp_indv = tp_vp.getIndividuals();
 		
 		VcfParser xp_vp = new VcfParser(xp_vcf_path, chr, log);
-		xp_vp.parseVCF(win_size, false);
+		xp_vp.parseVCF(win_size, this.anc_data_loc.equals(this.cross));
 		xp_wins = xp_vp.getWindows();
 		xp_indv = xp_vp.getIndividuals();
 		
 		VcfParser op_vp = new VcfParser(op_vcf_path, chr, log);
-		op_vp.parseVCF(win_size, false);
+		op_vp.parseVCF(win_size, this.anc_data_loc.equals(this.outgroup));
 		op_wins = op_vp.getWindows();
 		op_indv = op_vp.getIndividuals();
 		
@@ -494,6 +494,10 @@ public class SetupDriver {
         log.add(".");
 
         win_size = getWindowSize( (Double) args.get("win_size") );
+        log.add(".");
+        
+        
+        log.add(".");
 
         log.addLine(" complete!");
         System.out.println("Paramater Check Complete!");
