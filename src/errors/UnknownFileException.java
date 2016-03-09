@@ -4,9 +4,19 @@ import java.io.File;
 
 import tools.Log;
 
+/*
+ * Exception throw when a directory error is thrown while parsing inputs,
+ * usually thrown when a file cannot be found
+ */
 @SuppressWarnings("serial")
 public class UnknownFileException extends Exception {
 
+	/*
+	 * Simple default error when files cannot be read from the directory
+	 * 
+	 * @param log
+	 * @param dir
+	 */
 	public UnknownFileException(Log log, File dir) {
 		
 		log.addLine("There is an error with reading files from " 
@@ -16,6 +26,13 @@ public class UnknownFileException extends Exception {
 		log.addLine("\t*and go to wiki (https://github.com/jbelyeu/mySelecT/wiki) for parameter descriptions");
 	}
 	
+	/*
+	 * Error with message when files cannot be read from the directory
+	 * 
+	 * @param log
+	 * @param dir
+	 * @param msg
+	 */
 	public UnknownFileException(Log log, File dir, String msg) {
 		log.addLine("There is an error with reading files from " 
 				+ dir.getAbsolutePath());
