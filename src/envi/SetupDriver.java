@@ -363,6 +363,11 @@ public class SetupDriver {
 		else if (this.anc_data_loc.equals(this.outgroup)) {
 			anc_types = op_vp.getAncestralTypes();
 		}
+		anc_types = op_vp.getAncestralTypes();
+		//The ancestral data is required for statistical calculation
+		if (anc_types == null || anc_types.isEmpty()) {
+			throw new IllegalInputException(log, "ERROR: No ancestral data found in selected poulation file");
+		}
 	}
 	
 /*
