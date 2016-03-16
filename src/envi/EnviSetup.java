@@ -10,15 +10,13 @@ import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.internal.HelpScreenException;
 import tools.Log;
 
-/*
- * @author Hayden Smith
+/**
  * Hyper-Parallelized Composite of Multiple Signals (CMS) Java implementation GWAS and Local study version 1.0
  * This program sets up the environment needed for stats calculation.  
  */
 public class EnviSetup {
 
-	/** 
-
+	/**
 	 * It reads in the files and args provided, validates them (simple readability and logic checks), then
 	 * creates an instance of the SetupDriver class to generate the running environment. Outputs are written to a log.
 	 * 
@@ -195,42 +193,47 @@ public class EnviSetup {
                 .description("Set up the environment for SelecT");
 	
 		//Creating required arguments
-		parser.addArgument("target_pop_file").type(Arguments.fileType().verifyIsFile()
-	                .verifyCanRead()).help("Target population input file");
+		parser.addArgument("-tpf", "--target_pop_file").required(true)
+			.type(Arguments.fileType().verifyIsFile().verifyCanRead())
+			.help("Target population input file");
 	
-		parser.addArgument("cross_pop_file").type(Arguments.fileType().verifyIsFile()
-	                .verifyCanRead()).help("Cross population input file");
+		parser.addArgument("-cpf", "--cross_pop_file").required(true)
+			.type(Arguments.fileType().verifyIsFile().verifyCanRead())
+			.help("Cross population input file");
 		
 		parser.addArgument("-opf", "--out_pop_file").type(Arguments.fileType().verifyIsFile()
 					.verifyCanRead()).help("Outgroup population input file. "
 										+ "If not provided defaults to cross population");
 		
-		parser.addArgument("map_file").type(Arguments.fileType().verifyIsFile()
-					.verifyCanRead()).help("Genetic map input file");
+		parser.addArgument("-mf", "--map_file").required(true)
+			.type(Arguments.fileType().verifyIsFile().verifyCanRead())
+			.help("Genetic map input file");
 		
 		//TODO: DONE Review the non-hardcoded number
-		parser.addArgument("start_chr").type(Integer.class).help("Starting chromosome number. "
+		parser.addArgument("-sc", "--start_chr").type(Integer.class).help("Starting chromosome number. "
 				+ "Must be equal to or greater than 1.");
 	
 		//TODO: DONE Review the non-hardcoded number
-		parser.addArgument("end_chr").type(Integer.class).help("Ending chromosome number. "
-				+ "Must be equal to or greater than starting chromosome number.");
+		parser.addArgument("-ec", "--end_chr").required(true)
+			.type(Integer.class).help("Ending chromosome number. "
+			+ "Must be equal to or greater than starting chromosome number.");
 		
 		//TODO: DONE. Check to see if the species is passed correctly
-		parser.addArgument("species").type(String.class)
+		parser.addArgument("-s", "--species").required(true).type(String.class)
 				.help("Species name has to match the following format: genus_species");
 		
 		//TODO: NOTE Population names can be omitted
 		//NOTE Might not need population names if given actual input files
-		parser.addArgument("target_pop_name").type(String.class)
-				.help("Target population name");
+		parser.addArgument("-tpn", "--target_pop_name").required(true)
+			.type(String.class).help("Target population name");
 		
-		parser.addArgument("cross_pop_name").type(String.class)
-				.help("Cross population name");
+		parser.addArgument("-xpn", "--cross_pop_name").required(true)
+			.type(String.class).help("Cross population name");
 		
 		//allow user to specify which input file holds the ancestral data
-		parser.addArgument("anc_data_loc").type(String.class)
-		.help("Ancestral data location").choices("target","cross","out");
+		parser.addArgument("-adl", "--anc_data_loc").required(true)
+			.type(String.class).help("Ancestral data location")
+			.choices("target","cross","out");
 		
 		//Creating optional arguments
 		//TODO: Hardcoding removed. Need to include correct wiki page ref

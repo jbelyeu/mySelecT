@@ -9,6 +9,10 @@ import tools.SNP;
 import tools.SimDist;
 import tools.Window;
 
+/*
+ * Calculates the Fst (f-statistic) score as presented 
+ * by Wiley and Cockerham (1984)
+ */
 public class Fst extends HaplotypeTests {
 	
 	static int NUM_POPS = 3;
@@ -27,7 +31,7 @@ public class Fst extends HaplotypeTests {
 	private SimDist sel_sim;
 	
 	//Analysis options
-	private boolean deflt_prior;
+	private boolean default_prior;
 	private double prior_prob;
 	
 	//Fst statistic information
@@ -35,13 +39,28 @@ public class Fst extends HaplotypeTests {
 	private List<Double> all_Fst;
 	private List<Double> bayes_probs;
 	
+	
+	/**
+	 * For setting up the environment to run the Fst statistic
+	 * See supplemental material for more detail.
+	 * 
+	 * @param txin_win		current Window for the intersection of target-cross populations
+	 * @param tp_inx_indv	all Individuals of the target population after the intersection of target-cross populations
+	 * @param xp_int_indv	all Individuals of the cross population after the intersection of target-cross populations
+	 * @param op_inx_indv	all Individuals of the cross population after the intersection of target-cross populations
+	 * @param neut_sim		neutral simulation distances
+	 * @param sel_sim		simulation distances with selection
+	 * @param default_prior	True if the default probability score (1 / number of scores) should be used instead of the prior_prob.
+	 * @param prior_prob	prior probability score
+	 * 
+	 */
 	public Fst(Window txin_win, 
 				Individual[] tp_inx_indv,
 				Individual[] xp_int_indv,
 				Individual[] op_inx_indv,
 				SimDist neut_sim,
 				SimDist sel_sim,
-				boolean deflt_prior,
+				boolean default_prior,
 				double prior_prob) {
 		
 		this.win = txin_win;
@@ -53,7 +72,7 @@ public class Fst extends HaplotypeTests {
 		this.neut_sim = neut_sim;
 		this.sel_sim = sel_sim;
 		
-		this.deflt_prior = deflt_prior;
+		this.default_prior = default_prior;
 		this.prior_prob = prior_prob;
 		
 		all_Fst_snps = new ArrayList<SNP>();
@@ -61,6 +80,11 @@ public class Fst extends HaplotypeTests {
 		bayes_probs = new ArrayList<Double>();
 	}
 	
+	/**
+	 * Runs the Fst statistic using the environment setup by the constructor. 
+	 * See supplemental for details
+	 * @throws StatsCalcException 
+	 */
 	@Override
 	public void runStat() throws StatsCalcException {
 		
@@ -74,17 +98,17 @@ public class Fst extends HaplotypeTests {
 			//Calculate frequencies
 			double tp_size = (double) tp_indv.length*2;
 			int tp_instance = getInstanceOfAllele(tp_indv, index);
-			double tp_freq = (double) tp_instance / tp_size;
+			double tp_freq = tp_instance / tp_size;
 			
 			double xp_size = (double) xp_indv.length*2;
 			int xp_instance = getInstanceOfAllele(xp_indv, index);
-			double xp_freq = (double) xp_instance / xp_size;
+			double xp_freq = xp_instance / xp_size;
 			
 			double op_size = (double) op_indv.length*2;
 			int op_instance = getInstanceOfAllele(op_indv, index);
-			double op_freq = (double) op_instance /op_size;
+			double op_freq = op_instance /op_size;
 			
-			double avg_size = (tp_size + xp_size + op_size) / (double) NUM_POPS;
+			double avg_size = (tp_size + xp_size + op_size) / NUM_POPS;
 			
 			//All values are averaged between the populations
 			double sqrd_coef_var = getSqrdCoefficientOfVariation(tp_size,
@@ -128,10 +152,16 @@ public class Fst extends HaplotypeTests {
 		}
 		
 		//calculates the bayesian posterior probability of each given score
-		bayes_probs = calcScoreProbabilities(all_Fst, neut_sim, sel_sim, deflt_prior, prior_prob);
+		bayes_probs = calcScoreProbabilities(all_Fst, neut_sim, sel_sim, default_prior, prior_prob);
 
 	}
 	
+	/**
+	 * Gets the Fst score at a given SNP
+	 * 
+	 * @param s	the SNP whose score is desired
+	 * @return the Fst score 
+	 */
 	@Override
 	public Double getScoreAtSNP(SNP s) {
 		for (int i = 0; i < all_Fst_snps.size(); i++) {
@@ -143,6 +173,12 @@ public class Fst extends HaplotypeTests {
 	  	return Double.NaN;
 	}
 	
+	/**
+	 * Gets the bayesian probability score at a given SNP
+	 * 
+	 * @param s	the SNP whose score is desired
+	 * @return the probability score 
+	 */
 	@Override
 	public Double getProbAtSNP(SNP s) {
 	  	for (int i = 0; i < all_Fst_snps.size(); i++) {
@@ -240,9 +276,9 @@ public class Fst extends HaplotypeTests {
 		int xp_het_inst = getInstanceOfHeterozygosity(xp_indv, index);
 		int op_het_inst = getInstanceOfHeterozygosity(op_indv, index);
 		
-		double tp_het_freq = (double) tp_het_inst / tp_s;
-		double xp_het_freq = (double) xp_het_inst / xp_s;
-		double op_het_freq = (double) op_het_inst / op_s;
+		double tp_het_freq = tp_het_inst / tp_s;
+		double xp_het_freq = xp_het_inst / xp_s;
+		double op_het_freq = op_het_inst / op_s;
 		
 		double val1 = (tp_het_freq * tp_s) / (NUM_POPS * s_avg);
 		double val2 = (xp_het_freq * xp_s) / (NUM_POPS * s_avg);
@@ -308,7 +344,7 @@ public class Fst extends HaplotypeTests {
 		
 		int instance = 0;
 		for (int i = 0; i <indv.length; i++) {
-			if (indv[i].getStrand1Allele(index) != indv[i].getStrand2Allele(index)) {
+			if (indv[i].getAlleleFromStrand(index, true) != indv[i].getAlleleFromStrand(index, false)) {
 				instance++;
 			}
 		}
@@ -321,10 +357,10 @@ public class Fst extends HaplotypeTests {
 		
 		int instance = 0;
 		for (int i = 0; i < indv.length; i++) {
-			if (indv[i].getStrand1Allele(index) == 0) {
+			if (indv[i].getAlleleFromStrand(index, true) == 0) {
 				instance++;
 			}
-			if (indv[i].getStrand2Allele(index) == 0) {
+			if (indv[i].getAlleleFromStrand(index, false) == 0) {
 				instance++;
 			}
 		}

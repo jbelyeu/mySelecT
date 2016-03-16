@@ -4,6 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to represent the windows that regions are broken 
+ * up into for statistical calculations.
+ * 
+ */
 @SuppressWarnings("serial")
 public class Window implements Serializable {
 	
@@ -14,12 +19,21 @@ public class Window implements Serializable {
 	
 	private List<SNP> all_snps;
 	
+	/**
+	 * Simple constructor
+	 */
 	public Window() {
 		st_pos = 0;
 		end_pos = 0;
 		all_snps = new ArrayList<SNP>();
 	}
 	
+	/**
+	 * Constructor with fields for start and end of window
+	 * 
+	 * @param st_pos	start position for window
+	 * @param end_pos	end position for window
+	 */
 	public Window(int st_pos, int end_pos) {
 
 		this.st_pos = st_pos;
@@ -31,6 +45,14 @@ public class Window implements Serializable {
 		all_snps = new ArrayList<SNP>();
 	}
 	
+	/**
+	 * Constructor with fields for start of window, end of window, and 
+	 * a start index to show where to begin analysis
+	 * 
+	 * @param st_pos	start position for window
+	 * @param end_pos	end position for window
+	 * @param st_index	start index to begin analysis
+	 */
 	public Window (int st_pos, int end_pos, int st_index) {
 		
 		this.st_pos = st_pos;
@@ -39,15 +61,33 @@ public class Window implements Serializable {
 		this.all_snps = new ArrayList<SNP>();
 	}
 	
+	/**
+	 * Builds a SNP and adds it to the window
+	 * 
+	 * @param pos		position to add the SNP
+	 * @param a0		reference allele
+	 * @param a1		alternate allele
+	 * @param snp_id	ID of SNP
+	 */
 	public void addSNP(int pos, String a0, String a1, String snp_id) {
 		all_snps.add(new SNP(pos, a0, a1, snp_id));
 	}
 	
+	/**
+	 * Adds a SNP to the Window
+	 * 
+	 * @param s		SNP to add
+	 */
 	public void addSNP(SNP s) {
 		all_snps.add(s);
 	}
 	
-	//returns null if this index isn't within the window's boundaries
+	/**
+	 * Retrieves a SNP from the window
+	 * 
+	 * @param index		position to retrieve SNP from
+	 * @return			returns null if this index isn't within the window's boundaries, the SNP otherwise
+	 */
 	public SNP getSNP(int index) {
 		if (containsIndex(index)) {
 			return all_snps.get(index - st_index);
@@ -57,6 +97,15 @@ public class Window implements Serializable {
 		}
 	}
 	
+	/**
+	 * Retrieves a SNP from the window if the position, 
+	 * reference allele, and alternate allele match
+	 * 
+	 * @param pos	position of desired SNP
+	 * @param a0	reference allele
+	 * @param a1	alternate allele
+	 * @return		the desired SNP if found, null otherwise
+	 */
 	public SNP getSNP(int pos, String a0, String a1) {
 		
 		for (SNP s : all_snps) {
@@ -72,7 +121,12 @@ public class Window implements Serializable {
 		return null;
 	}
 	
-	//returns the index of the SNP within the Individual array
+	/**
+	 * Gets the index for a SNP from the window's individual array
+	 * 
+	 * @param snp	SNP whose index is is desired
+	 * @return		the index if found, -1 otherwise
+	 */
 	public int getSnpIndex(SNP snp) {
 		
 		for (int i = 0; i < all_snps.size(); i++) {
@@ -84,6 +138,12 @@ public class Window implements Serializable {
 		return -1;		
 	}
 	
+	/**
+	 * Tests whether a SNP is represented or not
+	 * 
+	 * @param snp	SNP of interest
+	 * @return		True if found
+	 */
 	public boolean containsSNP(SNP snp) {
 		
 		for (SNP s : all_snps) {
@@ -95,6 +155,12 @@ public class Window implements Serializable {
 		return false;
 	}
 	
+	/**
+	 * Tests whether an index is represented of not
+	 * 
+	 * @param index		index of interest
+	 * @return			true if within the bounds of the window, false if not
+	 */
 	public boolean containsIndex(int index) {
 		if (index >= st_index && index <= end_index) {
 			return true;

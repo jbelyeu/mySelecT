@@ -7,7 +7,7 @@ import tools.Individual;
 import tools.SNP;
 import tools.Window;
 
-/*
+/**
  * Performs intersections of the populations to find overlapping positions between all three populations.
  * Populations are compared by position and not variantID except in cases of irregular data types.
  * The overlapping is used for deltaDAF, XPEHH, and Fst, which compare target populations to cross
@@ -25,7 +25,7 @@ public class PopIntersector {
 	private Individual[] xp_ino_indv;
 	private Individual[] op_inx_indv;
 	
-	/*
+	/**
 	 * Simple constructor for PopIntersector class
 	 */
 	public PopIntersector() {
@@ -39,12 +39,17 @@ public class PopIntersector {
 		op_inx_indv = null;
 	}
 
-	/*
+	/**
 	 * Performs intersection between the target population and the cross population.
 	 * Inputs are lists of Windows for the target and cross populations, 
 	 * as well as arrays of individuals. The function creates new Individual 
 	 * arrays from the inputs for the intersects and calls functions to compare the 
 	 * populations to each other
+	 * 
+	 * @param tp_wins	windows for target population
+	 * @param xp_wins	windows for cross population
+	 * @param tp_indv	individuals for target population
+	 * @param xp_indv	individuals for cross population
 	 */
 	public void intersectCrossWithTargetPopulations(List<Window> tp_wins, 
 												List<Window> xp_wins,
@@ -72,6 +77,18 @@ public class PopIntersector {
 		tp_inx_indv = tp_indv_intersect;
 	}
 	
+	/**
+	 * Performs intersection between the cross population and the outgroup population.
+	 * Inputs are lists of Windows for the cross and outgroup populations, 
+	 * as well as arrays of individuals. The function creates new Individual 
+	 * arrays from the inputs for the intersects and calls functions to compare the 
+	 * populations to each other
+	 * 
+	 * @param op_wins	windows for outgroup population
+	 * @param xp_wins	windows for cross population
+	 * @param op_indv	individuals for outgroup population
+	 * @param xp_indv	individuals for cross population
+	 */
 	public void intersectCrossWithOutgroupPopulations(List<Window> op_wins,
 													List<Window> xp_wins, 
 													Individual[] op_indv,	
@@ -97,42 +114,42 @@ public class PopIntersector {
 		op_inx_indv = op_indv_intersect;
 	}
 	
-	/*
+	/**
 	 * Gets the target population-by-cross population intersection windows
 	 */
 	public List<Window> getTargetXCrossWins() {
 		return txin_wins;
 	}
 
-	/*
+	/**
 	 * Gets the target population-by-cross population intersection individuals
 	 */
 	public Individual[] getTargetXCrossIndv() {
 		return tp_inx_indv;
 	}
 
-	/*
+	/**
 	 * Gets the cross population-by-target population intersection individuals
 	 */
 	public Individual[] getCrossXTargetIndv() {
 		return xp_int_indv;
 	}
 
-	/*
+	/**
 	 * Gets the cross population-by-outgroup population intersection windows
 	 */
 	public List<Window> getCrossXOutWins() {
 		return xoin_wins;
 	}
 
-	/*
+	/**
 	 * Gets the cross population-by-outgroup population intersection individuals
 	 */
 	public Individual[] getCrossXOutIndv() {
 		return xp_ino_indv;
 	}
 
-	/*
+	/**
 	 * Gets the outgroup population-by-cross population intersection individuals
 	 */
 	public Individual[] getOutXCrossIndv() {
@@ -248,18 +265,18 @@ public class PopIntersector {
 
 		//Adding alleles to p1 population's individuals
 		for (int m = 0; m < p1_indv_intersect.length; m++) {
-			Integer str_1 = p1_indv[m].getStrand1Allele(p1_indx);
-			Integer str_2 = p1_indv[m].getStrand2Allele(p1_indx);
+			Integer str_1 = p1_indv[m].getAlleleFromStrand(p1_indx, true);
+			Integer str_2 = p1_indv[m].getAlleleFromStrand(p1_indx, false);
 
-			p1_indv_intersect[m].addAlleleToStrand1(str_1.toString());
-			p1_indv_intersect[m].addAlleleToStrand2(str_2.toString());
+			p1_indv_intersect[m].addAlleleToStrand(str_1.toString().charAt(0), true);
+			p1_indv_intersect[m].addAlleleToStrand(str_2.toString().charAt(0), false);
 		}
 
 		//Adding alleles to p2 population's individuals
 		for (int i = 0; i < p2_indv_intersect.length; i++) {
 
-			Integer str_1 = p2_indv[i].getStrand1Allele(p2_indx);
-			Integer str_2 = p2_indv[i].getStrand2Allele(p2_indx);
+			Integer str_1 = p2_indv[i].getAlleleFromStrand(p2_indx, true);
+			Integer str_2 = p2_indv[i].getAlleleFromStrand(p2_indx, true);
 
 			//switch allele types because they are reported on opposite a0 or a1 column
 			if (p1_snp.getAllele0().equals(p2_snp.getAllele1())) {
@@ -279,8 +296,8 @@ public class PopIntersector {
 				}
 			}
 
-			p2_indv_intersect[i].addAlleleToStrand1(str_1.toString());
-			p2_indv_intersect[i].addAlleleToStrand2(str_2.toString());
+			p2_indv_intersect[i].addAlleleToStrand(str_1.toString().charAt(0), true);
+			p2_indv_intersect[i].addAlleleToStrand(str_2.toString().charAt(0), false);
 		}
 	}
 	

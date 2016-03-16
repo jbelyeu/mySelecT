@@ -2,23 +2,23 @@ package errors;
 
 import tools.Log;
 
-/*
+/**
  * Exception thrown when arguments cannot be parsed
  */
 @SuppressWarnings("serial")
 public class IllegalInputException extends Exception {
 	
-	/*
+	/**
 	 * Default constructor
 	 */
 	public IllegalInputException() {}
 	
 	
-	/*
+	/**
 	 * Constructor allowing log and error message
 	 * 
-	 * @param log
-	 * @param message
+	 * @param log		universal log file
+	 * @param message	error message
 	 */
 	public IllegalInputException(Log log, String message) {
 		log.addLine("\n");

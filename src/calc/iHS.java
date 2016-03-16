@@ -11,6 +11,10 @@ import tools.SNP;
 import tools.SimDist;
 import tools.Window;
 
+/**
+ * Calculates the iHS (integrated extended-Haplotype homozygosity, Standardized)
+ * score as presented by Voight et al (2006)
+ */
 public class iHS extends HaplotypeTests {
 	
 	//General population information
@@ -28,7 +32,7 @@ public class iHS extends HaplotypeTests {
 	
 	//Analysis options
 	private boolean ihs_abs;
-	private boolean deflt_prior;
+	private boolean default_prior;
 	private double prior_prob;
 	
 	//iHS statistic information
@@ -40,36 +44,41 @@ public class iHS extends HaplotypeTests {
 	
 	/**
 	 * For setting up the environment to run the iHS statistic
+ 	 * See supplemental material for more detail.
 	 * 
-	 * @param log			universal log for progress and error output
-	 * @param win			current Window within the target population (tp)
-	 * @param individuals	all Individuals of the target population
-	 * @param anc_types		all Ancestral types in the form of SNPs; ancestral type is a0
-	 * @param all_win		all Windows in the tested region, usually the chr
-	 * @param gm			Genetic Map for the tested region, usually the chr
+	 * @param win					current Window within the target population (tp)
+	 * @param individuals			all Individuals of the target population
+	 * @param anc_types				all Ancestral types in the form of SNPs; ancestral type is a0
+	 * @param all_win				all Windows in the tested region
+	 * @param genetic_map			Genetic Map for the tested region
+	 * @param neut_sim				neutral simulation distances
+	 * @param sel_sim				simulation distances with selection
+	 * @param ihs_absolute_val		True if the absolute value of the ihs score should be calculated
+	 * @param default_prior			True if the default probability score (1 / number of scores) should be used instead of the prior_prob.
+	 * @param prior_prob			prior probability score
 	 */
 	public iHS(Window win, 
 				Individual[] individuals, 
 				List<Window> anc_types,
 				List<Window> all_win, 
-				GeneticMap gm,
+				GeneticMap genetic_map,
 				SimDist neut_sim,
 				SimDist sel_sim,
-				boolean ihs_abs,
-				boolean deflt_prior,
+				boolean ihs_absolute_val,
+				boolean default_prior,
 				double prior_prob){
 		
 		this.win = win;
 		this.individuals = individuals;
-		this.geneticMap = gm;
+		this.geneticMap = genetic_map;
 		this.neut_sim = neut_sim;
 		this.sel_sim = sel_sim;
 		
 		this.anc_types = anc_types;
 		this.all_win = all_win;
 		
-		this.ihs_abs = ihs_abs;
-		this.deflt_prior = deflt_prior;
+		this.ihs_abs = ihs_absolute_val;
+		this.default_prior = default_prior;
 		this.prior_prob = prior_prob;
 		
 		anc_eh = new ExtendedHaplotype();
@@ -121,6 +130,12 @@ public class iHS extends HaplotypeTests {
 		calcScoreProbabilities();
 	}
 	
+	/**
+	 * Gets the iHS score at a given SNP
+	 * 
+	 * @param s	the SNP whose score is desired
+	 * @return the iHS score 
+	 */
 	@Override
 	public Double getScoreAtSNP(SNP s) {
 		for (int i = 0; i < all_iHS_snp.size(); i++) {
@@ -132,6 +147,12 @@ public class iHS extends HaplotypeTests {
 	  	return Double.NaN;
 	}
 	
+	/**
+	 * Gets the bayesian posterior probability score at a given SNP
+	 * 
+	 * @param s	the SNP whose score is desired
+	 * @return the probability score 
+	 */
 	@Override
 	public Double getProbAtSNP(SNP s) {
 	  	for (int i = 0; i < all_iHS_snp.size(); i++) {
@@ -203,10 +224,11 @@ public class iHS extends HaplotypeTests {
 					all_std_iHS_abs.add(all_std_iHS.get(i));
 				}
 			}
-			bayes_post = calcScoreProbabilities(all_std_iHS_abs, neut_sim, sel_sim, deflt_prior, prior_prob);
+			bayes_post = calcScoreProbabilities(all_std_iHS_abs, neut_sim, sel_sim, default_prior, prior_prob);
 		}
-		else
-			bayes_post = calcScoreProbabilities(all_std_iHS, neut_sim, sel_sim, deflt_prior, prior_prob);
+		else {
+			bayes_post = calcScoreProbabilities(all_std_iHS, neut_sim, sel_sim, default_prior, prior_prob);
+		}
 		
 	}
 	

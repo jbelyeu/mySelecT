@@ -10,21 +10,33 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.apache.commons.math3.special.Erf;
+
+import errors.IllegalInputException;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.internal.HelpScreenException;
-
-import org.apache.commons.math3.special.Erf;
-
-import errors.IllegalInputException;
 import tools.Log;
 import tools.SNP;
 import tools.WindowStats;
 
+/**
+ * This class begins the  analyzer process. Combines results 
+ * from the windows generated in separate threads of the statistical 
+ * calculation processes and checks for combined significance. 
+ * 
+ */
 public class SignificanceAnalyzer {
 	
+	/**
+	 * Entry point for significance analysis. Run with -h option for 
+	 * argument details.
+	 * 
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
 		System.out.println("Starting the final phase of SelecT");
@@ -90,10 +102,14 @@ public class SignificanceAnalyzer {
                 .description("Run Analysis on evolutionary statistics");
 		
 		//Creating required arguments
-		parser.addArgument("wrk_dir").type(Arguments.fileType().verifyIsDirectory()
-                .verifyCanRead()).help("SelecT workspace directory (created in phase 1)");
-		//TODO: DONE. Review.
-		parser.addArgument("chr").type(Integer.class).help("Chromosome number. Must be equal to or greater than 1.");
+		parser.addArgument("-wd", "--wrk_dir").required(true)
+				.type(Arguments.fileType().verifyIsDirectory()
+                .verifyCanRead()).help("SelecT workspace directory "
+                + "(created in phase 1)");
+
+		parser.addArgument("-chr", "--chromosome_num").required(true)
+			.type(Integer.class).help("Chromosome number."
+			+ " Must be equal to or greater than 1.");
 		
 		//Creating optional arguments
 		parser.addArgument("-co", "--combine_only").action(Arguments.storeTrue())
@@ -157,7 +173,7 @@ public class SignificanceAnalyzer {
         }
 		
 		//require start_chr to be positive
-    	int chr_num = (Integer)parsedArgs.get("chr");
+    	int chr_num = (Integer)parsedArgs.get("chromosome_num");
 	    if (chr_num < 1) {
 	    	String msg = "Error: Chromosome number must be 1 or greater.";
 	        throw new IllegalInputException(log, msg);
@@ -169,17 +185,25 @@ public class SignificanceAnalyzer {
 	
 	private double sig_score;
 	private File out_file;
-	private List<WindowStats> all_ws;
+	private List<WindowStats> all_window_stats;
 	
 	private static Log log;
 	
-	public SignificanceAnalyzer(HashMap<String, Object> arg_map, List<WindowStats> all_ws, Log log) {
+	/**
+	 * Constructor for the SignificanceAnalyzer class. Takes in the parsed argument map from main(),
+	 * a list of window stats, and the log file
+	 * 
+	 * @param arg_map				map of arguments from command line
+	 * @param all_window_stats		list of stats for all windows
+	 * @param log					universal log
+	 */
+	public SignificanceAnalyzer(HashMap<String, Object> arg_map, List<WindowStats> all_window_stats, Log log) {
 		
 		this.log = log;
-		this.all_ws = all_ws;
+		this.all_window_stats = all_window_stats;
 		
 		sig_score = pToZ((Double) arg_map.get("p_value"));
-		System.out.println("Using p-value of " + (Double) arg_map.get("p_value") 
+		System.out.println("Using p-value of " + arg_map.get("p_value") 
 				+ " and significance score of " + sig_score);
 		
 		File wrk_dir = (File) arg_map.get("wrk_dir");
@@ -196,11 +220,19 @@ public class SignificanceAnalyzer {
 		}
 	}
 	
+	/**
+	 * Analyses significance of the scores for each stat
+	 * 
+	 * @param run_normalization			True if windows should be normalized before significance is analyzed 
+	 * @param ignore_mop				True if the MoP score should be ignored
+	 * @param ignore_pop				True if PoP score should be ignored
+	 * @throws IllegalInputException	
+	 */
 	public void findSignificantSNPs(boolean run_normalization, boolean ignore_mop, boolean ignore_pop) 
 			throws IllegalInputException {
 		
 		if (run_normalization) {
-			all_ws = normalizeAllWindows(all_ws);
+			all_window_stats = normalizeAllWindows(all_window_stats);
 		}
 		
 		try {
@@ -209,13 +241,13 @@ public class SignificanceAnalyzer {
 			
 			out_file.createNewFile();
 			PrintWriter pw = new PrintWriter(out_file);
-			pw.print("snp_id\tposition\tiHS\tXPEHH\tiHH\tdDAF\tDAF\tFst"//\tTajD\tNew
+			pw.print("snp_id\tposition\tiHS\tXPEHH\tiHH\tdDAF\tDAF\tFst"
 					+ "\tunstd_PoP\tunstd_MoP\twin_PoP\twin_MoP\n");
 			
-			Collections.sort(all_ws);
-			for (int i = 0; i < all_ws.size(); i++) {
+			Collections.sort(all_window_stats);
+			for (int i = 0; i < all_window_stats.size(); i++) {
 				
-				WindowStats ws = all_ws.get(i);
+				WindowStats ws = all_window_stats.get(i);
 				List<SNP> ws_snps = ws.getAllSNPs();
 				
 				for (int j = 0; j < ws_snps.size(); j++) {

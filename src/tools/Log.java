@@ -5,6 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+/**
+ * Log implementation, used for universal logging during execution and error logs.
+ * 
+ *
+ */
 public class Log {
 	
 	public static enum type {envi, stat, analysis, combine};
@@ -24,6 +29,9 @@ public class Log {
 	private File log_file;
 	private PrintWriter wr;
 	
+	/**
+	 * Simple constructor
+	 */
 	public Log() {
 		
 		try {
@@ -40,6 +48,11 @@ public class Log {
 		}
 	}
 	
+	/**
+	 * Constructor defining type 
+	 * 
+	 * @param type		type of constructor, either envi, stat, or analysis (ex. Log.type.envi)
+	 */
 	public Log(Log.type type) {
 		
 		try {
@@ -83,7 +96,13 @@ public class Log {
 		}
 		
 	}
-	
+	/**
+	 * Constructor defining type and name
+	 * 
+	 * 
+	 * @param type	type of constructor, either envi, stat, or analysis (ex. Log.type.envi)
+	 * @param name	name of constructor
+	 */	
 	public Log(Log.type type, String name) {
 		
 		try {
@@ -113,11 +132,20 @@ public class Log {
 		}		
 	}
 	
+	/**
+	 * Writes a message and a newline character to the log file
+	 * @param args
+	 */
 	public void addLine(String args) {
 		wr.write(args + "\n");
 		wr.flush();
 	}
 	
+	/**
+	 * Writes a message to the log file
+	 * 
+	 * @param args
+	 */
 	public void add(String args) {
 		wr.write(args);
 		wr.flush();

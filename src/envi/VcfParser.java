@@ -12,7 +12,7 @@ import tools.Log;
 import tools.SNP;
 import tools.Window;
 
-/*
+/**
  * VcfParser is used to parser input VCF files with population data for SelecT run.
  * Data parsed includes individuals, windows, and ancestral types
  */
@@ -29,7 +29,7 @@ public class VcfParser {
 	private Individual[] individuals;
 	private Log log;
 	
-	/*
+	/**
 	 * Simple constructor
 	 */
 	public VcfParser()
@@ -42,11 +42,12 @@ public class VcfParser {
 		log = null; 
 	}
 	
-	/*
-	 * Constructor with inputs 
+	/**
+	 * Constructor with inputs
 	 * 
-	 * @param file_path path to the VCF file that will be parsed
-	 * @param log a simple log file to record how the parsing goes
+	 * @param file_path	path to the VCF file that will be parsed
+	 * @param chr		chromosome number for the VCF file
+	 * @param log		a simple log file to record how the parsing goes
 	 */
 	public VcfParser(String file_path, int chr, Log log)
 	{
@@ -59,12 +60,13 @@ public class VcfParser {
 		ancestral = new ArrayList<Window>();
 	}
 	
-	/*
+	/**
 	 * Parses the VCF file and stores the resulting data 
 	 * (individuals, ancestral data, and windows) as members of the VcfParser
 	 * 
-	 * @param win_size how many bases to include in each window
-	 * @param anc_data whether or not this file contains ancestral data
+	 * @param win_size	how many bases to include in each window
+	 * @param anc_data	whether or not this file contains ancestral data
+	 * @throws FileParsingException
 	 */
 	public void parseVCF(int win_size, boolean anc_data) throws FileParsingException {
 		log.addLine("Importing VCF data from " +  file_path);
@@ -162,33 +164,33 @@ public class VcfParser {
 							for (int j = 0; j < alt_alleles.length; j++) {
 								
 								if (Integer.parseInt(alleles[0]) == j + 1) {
-									individuals[i-DEFAULT_COL].addAlleleToStrand1(true);
+									individuals[i-DEFAULT_COL].addAlleleToStrand(true, true);
 								}
 								else {
-									individuals[i-DEFAULT_COL].addAlleleToStrand1(false);
+									individuals[i-DEFAULT_COL].addAlleleToStrand(false, true);
 								}
 								
 								if (Integer.parseInt(alleles[1]) == j + 1) {
-									individuals[i-DEFAULT_COL].addAlleleToStrand2(true);
+									individuals[i-DEFAULT_COL].addAlleleToStrand(true, false);
 								}
 								else {
-									individuals[i-DEFAULT_COL].addAlleleToStrand2(false);
+									individuals[i-DEFAULT_COL].addAlleleToStrand(false, false);
 								}
 								
 							}
 							//adding ref Individual data
 							if (Integer.parseInt(alleles[0]) == 0) {
-								individuals[i-DEFAULT_COL].addAlleleToStrand1(true);
+								individuals[i-DEFAULT_COL].addAlleleToStrand(true, true);
 							}
 							else {
-								individuals[i-DEFAULT_COL].addAlleleToStrand1(false);
+								individuals[i-DEFAULT_COL].addAlleleToStrand(false, true);
 							}
 							
 							if ( Integer.parseInt(alleles[1]) == 0) {
-								individuals[i-DEFAULT_COL].addAlleleToStrand2(true);
+								individuals[i-DEFAULT_COL].addAlleleToStrand(true, false);
 							}
 							else {
-								individuals[i-DEFAULT_COL].addAlleleToStrand2(false);
+								individuals[i-DEFAULT_COL].addAlleleToStrand(false, false);
 							}
 						}
 						
@@ -208,8 +210,8 @@ public class VcfParser {
 				    	//Fill in Individual data
 				    	for (int i = DEFAULT_COL; i < ln.length; i++) {
 				    		String[] alleles = ln[i].split("\\|");
-				    		individuals[i-DEFAULT_COL].addAlleleToStrand1(alleles[0]); 
-				    		individuals[i-DEFAULT_COL].addAlleleToStrand2(alleles[1]); 
+				    		individuals[i-DEFAULT_COL].addAlleleToStrand(alleles[0].charAt(0), true); 
+				    		individuals[i-DEFAULT_COL].addAlleleToStrand(alleles[1].charAt(0), false); 
 				    	}
 				    	
 				    	index++;
@@ -316,21 +318,21 @@ public class VcfParser {
 		return aa_arr[0].toUpperCase();
 	}
 	
-	/*
+	/**
 	 * Gets the windows generated from the parsed VCF file
 	 */
 	public List<Window> getWindows() {
 		return windows; 
 	}
 	
-	/*
+	/**
 	 * Gets the ancestral data generated from the parsed VCF file 
 	 */
 	public List<Window> getAncestralTypes() {
 		return ancestral;
 	}
 	
-	/*
+	/**
 	 * Gets the individuals generated from the parsed VCF file
 	 */
 	public Individual[] getIndividuals() {

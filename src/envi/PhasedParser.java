@@ -12,7 +12,7 @@ import tools.Log;
 import tools.SNP;
 import tools.Window;
 
-/*
+/**
  * Parses phased HapMap legend files, not used in current implementation of SelecT.
  */
 public class PhasedParser {
@@ -39,6 +39,13 @@ public class PhasedParser {
 		log = null;
 	}
 	
+	/**
+	 * 
+	 * @param lg_path
+	 * @param ph_path
+	 * @param log
+	 * @throws FileParsingException
+	 */
 	public PhasedParser(String lg_path, String ph_path, Log log) throws FileParsingException {
 		
 		this.lg_path = lg_path;
@@ -168,7 +175,7 @@ public class PhasedParser {
 					
 					if (!cur_dups.contains(indv_indx)) {
 						
-						check = indv.addAlleleToStrand1(str1.next());
+						check = indv.addAlleleToStrand(str1.next().charAt(0), true);
 						if (!check) {
 							String msg = "Error: Phased file " + ph_path
 									+ " has an problem with an allele on line "
@@ -177,7 +184,7 @@ public class PhasedParser {
 							str2.close();
 							throw new FileParsingException(log, msg);
 						}
-						check = indv.addAlleleToStrand2(str2.next());
+						check = indv.addAlleleToStrand(str2.next().charAt(0), false);
 						if (!check) {
 							String msg = "Error: Phased file " + ph_path
 									+ " has an problem with an allele on line "

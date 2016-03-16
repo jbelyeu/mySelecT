@@ -11,15 +11,24 @@ import tools.SNP;
 import tools.SimDist;
 import tools.Window;
 
+/**
+ * Parent class for each of the haplotype-based statistical tests,
+ * meaning Fst, dDAF, iHS, iHH, and XP-EHH.
+ */
 public abstract class HaplotypeTests {
 	
+	/**
+	 * Standardizes the data by calculating the z-score at every position
+	 * follows this equation: z = (x-mean[x])/std[x];
+	 * z = standardized data point
+	 * x = unstandardized data point
+	 * mean[x] = mean of all data in set
+	 * std[x] = standard deviation of all data in set 
+	 * 
+	 * @param all_unstd_data 	the unstandardized values
+	 * @return 					returns the standardized values
+	 */
 	public static List<Double> normalizeData(List<Double> all_unstd_data) {
-		//Standardizes the data by calculating the z-score at every position
-		//	follows this equation: z = (x-mean[x])/std[x]; 
-		//		z = standardized data point
-		//		x = unstandardized data point
-		//		mean[x] = mean of all data in set
-		//		std[x] = standard deviation of all data in set
 		
 		List<Double> all_data = new ArrayList<Double>();
 		
@@ -69,18 +78,27 @@ public abstract class HaplotypeTests {
 	public abstract List<Double> getProbs();
 	public abstract void printStats();
 
-	
+	/**
+	 * Calculates the Bayesian posterior probability of each score
+	 *  
+	 * @param std_scores		list of scores (of type dDAF, Fst, iHH, iHS, or XPEHH)
+	 * @param neut_sim			neutral simulation distances
+	 * @param sel_sim			simulation distances with selection
+	 * @param default_prior		True if the default probability score (1 / number of scores) should be used instead of the prior_prob.
+	 * @param prior				prior probability score
+	 * @return					Returns a list of bayesian score probabilities
+	 */
 	protected List<Double> calcScoreProbabilities(List<Double> std_scores, 
 													SimDist neut_sim, 
 													SimDist sel_sim,
-													boolean deflt_prior,
+													boolean default_prior,
 													double prior) {
 		
 		
 		List<Double> bayes_post = new ArrayList<Double>();
 		double prior_prob = prior;
 		
-		if (deflt_prior) {
+		if (default_prior) {
 			prior_prob = 1 / (double) std_scores.size();
 		}
 				
@@ -124,7 +142,7 @@ public abstract class HaplotypeTests {
 			for (int i = 0; i < individuals.length; i++) {
 				
 				//adding the index of the individual with the corresponding strand (1)
-				int st1_allele = individuals[i].getStrand1Allele(snp_index);
+				int st1_allele = individuals[i].getAlleleFromStrand(snp_index, true);
 				if (st1_allele == 0) {
 					anc_eh.add(i, 1);
 				}
@@ -133,7 +151,7 @@ public abstract class HaplotypeTests {
 				}
 				
 				//adding the index of the individual with the corresponding strand (2)
-				int st2_allele = individuals[i].getStrand2Allele(snp_index);
+				int st2_allele = individuals[i].getAlleleFromStrand(snp_index, false);
 				if (st2_allele == 0) { 
 					anc_eh.add(i, 2);
 				}
@@ -146,7 +164,7 @@ public abstract class HaplotypeTests {
 		else if (win_snp.getAllele1().equals(anc_snp.getAllele0())) {
 			for (int i = 0; i < individuals.length; i++) {
 				
-				int st1_allele = individuals[i].getStrand1Allele(snp_index);
+				int st1_allele = individuals[i].getAlleleFromStrand(snp_index, true);
 				if (st1_allele == 0){
 					der_eh.add(i, 1);
 				}
@@ -154,7 +172,7 @@ public abstract class HaplotypeTests {
 					anc_eh.add(i, 1);
 				}
 				
-				int st2_allele = individuals[i].getStrand2Allele(snp_index);
+				int st2_allele = individuals[i].getAlleleFromStrand(snp_index, false);
 				if (st2_allele == 0) {
 					der_eh.add(i, 2);
 				}
@@ -197,7 +215,7 @@ public abstract class HaplotypeTests {
 			
 			int dist = ehh_pos[i+1] - ehh_pos[i];
 			
-			double wt_dist = (double) dist * rate;
+			double wt_dist = dist * rate;
 			
 			ihh_lft += wt_dist * ehh_vals[i];
 		}
@@ -209,7 +227,7 @@ public abstract class HaplotypeTests {
 			
 			int dist = ehh_pos[i] - ehh_pos[i-1];
 			
-			double wt_dist = (double) dist * rate;
+			double wt_dist = dist * rate;
 			
 			ihh_rt += wt_dist * ehh_vals[i];
 			

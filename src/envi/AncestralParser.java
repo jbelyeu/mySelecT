@@ -11,7 +11,7 @@ import tools.Log;
 import tools.SNP;
 import tools.Window;
 
-/*
+/**
  * AncestralParser is used for parsing out ancestral data not 
  * included as part of a VCF. This functionality is not currently used; 
  * ancestral data must be included in one of the VCFs.
@@ -35,6 +35,14 @@ public class AncestralParser {
 	private Scanner anc_scan;
 	private Log log;
 
+	/**
+	 * 
+	 * @param anc_path
+	 * @param chr
+	 * @param s_name
+	 * @param log
+	 * @throws FileParsingException
+	 */
 	public AncestralParser (String anc_path, int chr, String s_name, Log log) throws FileParsingException {
 		
 		AncestralParser.EMF_SPECIES_NAME = s_name.toLowerCase();

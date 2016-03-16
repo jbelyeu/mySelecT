@@ -4,21 +4,22 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import tools.ExtendedHaplotype;
 import tools.Individual;
 import tools.SNP;
 import tools.Window;
-import tools.ExtendedHaplotype;
 
-/*
+/**
+ * Calculates the EHH (Extended-Haplotype Homozygosity)
+ * score as presented by Sabeti et al (2002)
+ * 
  * Uses the equation:
  * 
  * 			Summation(i=1)=>s (eti _combine_ 2)
  * EHH	=	---------------
  * 				(Ct _combine_ 2)
  * 
- * 
  */
-
 public class EHH {
 	
 	private static double SIGNIFICANT_EHH = 0.05;
@@ -44,6 +45,16 @@ public class EHH {
 	
 	private List<SNP> dups_test = new ArrayList<SNP>();
 	
+	/**
+	 * Sets up the environment to run the EHH statistic
+	 * See supplemental material for more detail.
+	 * 
+	 * @param core_win		window of the core site 
+	 * @param individuals	individuals of target population
+	 * @param core_snp		Core SNP (sore site allele)
+	 * @param all_haplo		all haplotypes for the population
+	 * @param all_win		all Windows in the tested region
+	 */
 	public EHH(Window core_win, Individual[] individuals, SNP core_snp, 
 			ExtendedHaplotype all_haplo, List<Window> all_win) {
 		
@@ -68,6 +79,12 @@ public class EHH {
 		group.add(all_haplo);
 	}
 	
+	/**
+	 * Calculates the extended haplotype homozygosity score to the given position
+	 * 
+	 * @param end_pos	position to end calculation
+	 * @return			False if no significant EHH found  
+	 */
 	public boolean calcEhhToPosition(int end_pos) {
 		
 		dups_test = new ArrayList<SNP>();
@@ -122,6 +139,7 @@ public class EHH {
 	 * Organizes all Extended Haplotypes until there are insignificant 
 	 * homozygosity levels (EHH <= 0.05)
 	 * 
+	 * @param ehh_cutoff	threshold for significant EHH score
 	 * @return return true if the analysis generated significant results
 	 * @throws EhhComputationException 
 	 */
@@ -281,48 +299,48 @@ public class EHH {
 			nxt_snp_index = dwnstrm_win.getSnpIndex(nxt_snp);
 		}
 		
-		for (ExtendedHaplotype eh : group) {
+		for (ExtendedHaplotype extended_haplotype : group) {
 			
 			//if the ExtHaplo is size = 1 it is by definition already completely unique 
 			//and doen't need to be checked for more uniqueness
-			if (eh.size() == 1){
-				updated_group.add(eh);
+			if (extended_haplotype.size() == 1){
+				updated_group.add(extended_haplotype);
 			}
 			else {
 			
-				ExtendedHaplotype eh_0 = new ExtendedHaplotype();
-				ExtendedHaplotype eh_1 = new ExtendedHaplotype();
+				ExtendedHaplotype extended_haplotype_0 = new ExtendedHaplotype();
+				ExtendedHaplotype extended_haplotype_1 = new ExtendedHaplotype();
 				
-				while (!eh.isEmpty()) {
+				while (!extended_haplotype.isEmpty()) {
 					
-					int id = eh.getNextID();
-					int strand = eh.getNextStrand();
+					int id = extended_haplotype.getNextID();
+					int strand = extended_haplotype.getNextStrand();
 					
 					Individual indv = individuals[id];
 					
 					int allele = -1;
 					if (strand == 1) {
-						allele = indv.getStrand1Allele(nxt_snp_index);
+						allele = indv.getAlleleFromStrand(nxt_snp_index, true);
 					}
 					if (strand == 2) {
-						allele = indv.getStrand2Allele(nxt_snp_index);
+						allele = indv.getAlleleFromStrand(nxt_snp_index, false);
 					}
 					
 					if (allele == 0) {
-						eh_0.add(id, strand);
+						extended_haplotype_0.add(id, strand);
 					}
 					if (allele == 1) {
-						eh_1.add(id, strand);
+						extended_haplotype_1.add(id, strand);
 					}
 					
-					eh.removeFirst();
+					extended_haplotype.removeFirst();
 				}
 				
-				if (eh_0.size() > 0) {
-					updated_group.add(eh_0);
+				if (extended_haplotype_0.size() > 0) {
+					updated_group.add(extended_haplotype_0);
 				}
-				if (eh_1.size() > 0) {
-					updated_group.add(eh_1);
+				if (extended_haplotype_1.size() > 0) {
+					updated_group.add(extended_haplotype_1);
 				}
 			}
 		}

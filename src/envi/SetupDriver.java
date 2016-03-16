@@ -16,7 +16,7 @@ import tools.Log;
 import tools.Window;
 
 
-/*
+/**
  * Driver to create the environment for running SelecT.
  */
 public class SetupDriver {
@@ -81,7 +81,7 @@ public class SetupDriver {
 	//progress log
 	private Log log;
 
-	/*
+	/**
 	 * Create SetupDriver instance.
 	 * 
 	 * @param arg_map map of the arguments (argument names -> argument values)
@@ -94,9 +94,11 @@ public class SetupDriver {
 		setArgs(arg_map);
 	}
 	
-	/*
+	/**
 	 * Runs the setup processes. Specifically, parses the input files using VcfParser instances,
 	 * uses PopIntersector to intersect the populations, then writes out the results into the workspace.
+	 * 
+	 * @throws Exception
 	 */
 	public void runSetup() throws Exception {
 		
@@ -363,10 +365,9 @@ public class SetupDriver {
 		else if (this.anc_data_loc.equals(this.outgroup)) {
 			anc_types = op_vp.getAncestralTypes();
 		}
-		anc_types = op_vp.getAncestralTypes();
 		//The ancestral data is required for statistical calculation
 		if (anc_types == null || anc_types.isEmpty()) {
-			throw new IllegalInputException(log, "ERROR: No ancestral data found in selected poulation file");
+			throw new IllegalInputException(log, "ERROR: No ancestral data found in selected population file");
 		}
 	}
 	

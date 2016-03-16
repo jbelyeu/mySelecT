@@ -8,7 +8,7 @@ import errors.FileParsingException;
 import tools.GeneticMap;
 import tools.Log;
 
-/*
+/**
  * MapParser parses the genetic linkage map file that is required for calculating 
  * haplotype-based statistics.
  */
@@ -22,11 +22,11 @@ public class MapParser {
 	private Scanner map_scan;
 	private Log log;
 	
-	/*
+	/**
 	 * Constructor with fields. 
 	 * 
-	 * @param map_file path to the linkage map file 
-	 * @param log 
+	 * @param map_file	path to the linkage map file 
+	 * @param log		universal log file
 	 */
 	public MapParser(String map_file, Log log) throws FileParsingException {
 		

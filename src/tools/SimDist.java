@@ -3,6 +3,10 @@ package tools;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to hold simulation distance data
+ *
+ */
 public class SimDist {
 	
 	public static final int IHS_TYPE = 0;
@@ -20,6 +24,12 @@ public class SimDist {
 	
 	private List<Double> sim_vals;
 	
+	/**
+	 * Constructor with lower and upper bounds
+	 * 
+	 * @param low_bndry		lower bound for simulation data
+	 * @param up_bndry		upper bound for simulation data
+	 */
 	public SimDist(int low_bndry, int up_bndry) {
 		
 		this.up_bndry = up_bndry;
@@ -30,6 +40,11 @@ public class SimDist {
 		sim_vals = new ArrayList<Double>();
 	}
 
+	/**
+	 * Adds a new simulation point
+	 * 
+	 * @param val	new simulation point to add
+	 */
 	public void addSimValue(double val) {
 		
 		sim_vals.add(val);
@@ -52,10 +67,16 @@ public class SimDist {
 		return mean_indx;
 	}
 	
+	/**
+	 * Returns index of where the score given appears within simulation data
+	 * 
+	 * @param score		score value of interest
+	 * @return			index where the score is found
+	 */
 	public int getScoreIndex(Double score) {
 		
 		double rng = Math.abs((double) up_bndry - (double) low_bndry);
-		double bin_size = rng / (double) BIN_NUM;
+		double bin_size = rng / BIN_NUM;
 		
 		int indx = (int)((score - low_bndry) / bin_size);
 		
@@ -69,10 +90,16 @@ public class SimDist {
 		return indx;
 	}
 	
-	public Double getProbAtIndex(int indx) {
+	/**
+	 * Returns probability at the given index within simulation data
+	 * 
+	 * @param index		index of interest
+	 * @return			probability of that index
+	 */
+	public Double getProbAtIndex(int index) {
 		
-		if (indx >= 0 && indx < BIN_NUM) {
-			return sim_vals.get(indx);
+		if (index >= 0 && index < BIN_NUM) {
+			return sim_vals.get(index);
 		}
 		else {
 			return Double.NaN;

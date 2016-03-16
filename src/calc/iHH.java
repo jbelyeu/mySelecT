@@ -11,6 +11,10 @@ import tools.SNP;
 import tools.SimDist;
 import tools.Window;
 
+/**
+ * Calculates the iHH (integrated extended-Haplotype Homozygosity)
+ * score as presented by Voight et al (2006)
+ */
 public class iHH extends HaplotypeTests {
 	
 	//General population information
@@ -28,7 +32,7 @@ public class iHH extends HaplotypeTests {
 	private SimDist sel_sim;
 	
 	//Analysis options
-	private boolean deflt_prior;
+	private boolean default_prior;
 	private double prior_prob;
 	
 	//iHH statistic information
@@ -39,34 +43,38 @@ public class iHH extends HaplotypeTests {
 	
 	/**
 	 * For setting up the environment to run the iHH statistic
+	 * See supplemental material for more detail.
 	 * 
-	 * @param log			universal log for progress and error output		
 	 * @param win			current Window within the target population (tp)
 	 * @param individuals	all Individuals of the target population
 	 * @param anc_types		all Ancestral types in the form of SNPs; ancestral type is a0
-	 * @param all_win		all Windows in the tested region, usually the chr
-	 * @param gm			Genetic Map for the tested region, usually the chr
+	 * @param all_win		all Windows in the tested region
+	 * @param genetic_map	Genetic Map for the tested region
+	 * @param neut_sim		neutral simulation distances
+	 * @param sel_sim		simulation distances with selection
+	 * @param default_prior	True if the default probability score (1 / number of scores) should be used instead of the prior_prob.
+	 * @param prior_prob	prior probability score
 	 */
 	public iHH(Window win, 
 				Individual[] individuals, 
 				List<Window> anc_types,
 				List<Window> all_win, 
-				GeneticMap gm,
+				GeneticMap genetic_map,
 				SimDist neut_sim,
 				SimDist sel_sim,
-				boolean deflt_prior,
+				boolean default_prior,
 				double prior_prob) {
 		
 		this.win = win;
 		this.individuals = individuals;
-		this.geneticMap = gm;
+		this.geneticMap = genetic_map;
 		this.neut_sim = neut_sim;
 		this.sel_sim = sel_sim;
 		
 		this.anc_types = anc_types;
 		this.all_win = all_win;
 		
-		this.deflt_prior = deflt_prior;
+		this.default_prior = default_prior;
 		this.prior_prob = prior_prob;
 		
 		anc_eh = new ExtendedHaplotype();
@@ -114,10 +122,16 @@ public class iHH extends HaplotypeTests {
 		all_std_iHH = standardizeData(all_unstd_iHH);
 		
 		//calculates the bayesian posterior probability of each given score
-		bayes_probs = calcScoreProbabilities(all_std_iHH, neut_sim, sel_sim, deflt_prior, prior_prob);
+		bayes_probs = calcScoreProbabilities(all_std_iHH, neut_sim, sel_sim, default_prior, prior_prob);
 
 	}
 	
+	/**
+	 * Gets the iHH score at a given SNP
+	 * 
+	 * @param s	the SNP whose score is desired
+	 * @return the iHH score 
+	 */
 	@Override
 	public Double getScoreAtSNP(SNP s) {
 		for (int i = 0; i < all_iHH_snp.size(); i++) {
@@ -129,6 +143,12 @@ public class iHH extends HaplotypeTests {
 	  	return Double.NaN;
 	}
 	
+	/**
+	 * Gets the bayesian probability score at a given SNP
+	 * 
+	 * @param s	the SNP whose score is desired
+	 * @return the probability score 
+	 */
 	@Override
 	public Double getProbAtSNP(SNP s) {
 	  	for (int i = 0; i < all_iHH_snp.size(); i++) {

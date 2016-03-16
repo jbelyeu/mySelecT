@@ -10,6 +10,12 @@ import java.util.TreeSet;
 
 import calc.HaplotypeTests;
 
+/**
+ * Class to store stats for a window. Stores iHS, 
+ * XPEHH, iHH, dDAF, DAF, Fst, and the standardized 
+ * and unstandardized means and products of scores 
+ * 
+ */
 public class WindowStats implements Comparable<WindowStats>{
 	
 	private int st_pos;
@@ -21,19 +27,26 @@ public class WindowStats implements Comparable<WindowStats>{
 	private TreeMap<SNP, Double> ddaf;
 	private TreeMap<SNP, Double> daf;
 	private TreeMap<SNP, Double> fst;
-	//private TreeMap<SNP, Double> tajd;
-	//private TreeMap<SNP, Double> new;
 	
 	private TreeMap<SNP, Double> win_scores_prod_unstd;
 	private TreeMap<SNP, Double> win_scores_mean_unstd;
 	private TreeMap<SNP, Double> win_scores_prod_std;
 	private TreeMap<SNP, Double> win_scores_mean_std;
 	
+	/**
+	 * Simple constructor
+	 */
 	public WindowStats() {
 		
 		this(-1, -1);
 	}
 	
+	/**
+	 * Constructor with fields for start and end position for the window
+	 * 
+	 * @param st_pos	window start position
+	 * @param end_pos	window end position
+	 */
 	public WindowStats(int st_pos, int end_pos) {
 		
 		this.st_pos = st_pos;
@@ -52,6 +65,11 @@ public class WindowStats implements Comparable<WindowStats>{
 		win_scores_mean_std = new TreeMap<SNP, Double>();
 	}
 	
+	/**
+	 * Gets all SNPs for all statistics
+	 * 
+	 * @return	list of all SNPs
+	 */
 	public List<SNP> getAllSNPs() {
 		
 		TreeSet<SNP> snps_set = new TreeSet<SNP>();
@@ -72,6 +90,12 @@ public class WindowStats implements Comparable<WindowStats>{
 		return all_snps;
 	}
 	
+	/**
+	 * Gets total number of SNPs (uses getAllSNPs() to 
+	 * create list, then returns length of that list) 
+	 * 
+	 * @return	number of SNPs for the window
+	 */
 	public int getTotNumSNPs() {
 		
 		List<SNP> all_snps = getAllSNPs();
@@ -79,6 +103,7 @@ public class WindowStats implements Comparable<WindowStats>{
 		return all_snps.size();
 	}
 	
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////Ended here
 	public int getNextPosition(int prev_pos) {
 		
 		int nxt_pos = end_pos;
@@ -606,8 +631,9 @@ public class WindowStats implements Comparable<WindowStats>{
 	private int comparePositions(int nxt_pos, int prev_pos, Set<SNP> snps) {
 		
 		for (SNP s : snps) {
-			if (s.getPosition() > prev_pos && s.getPosition() <= nxt_pos)
+			if (s.getPosition() > prev_pos && s.getPosition() <= nxt_pos) {
 				nxt_pos = s.getPosition();
+			}
 		}
 		
 		return nxt_pos;

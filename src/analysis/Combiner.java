@@ -10,8 +10,14 @@ import java.util.List;
 
 import errors.FileParsingException;
 import errors.IllegalInputException;
-import tools.*;
+import tools.Log;
+import tools.SNP;
+import tools.WindowStats;
 
+/**
+ * Runs combination of windows and analysis data from statistical calculation
+ *
+ */
 public class Combiner {
 
 	private static String[] DEFAULT = {"i", "x", "h", "dd", "d", "f", "up", "um", "p", "m"};
@@ -26,11 +32,19 @@ public class Combiner {
 	
 	private Log log;
 	
+	/**
+	 * Constructor, instantiates the Combiner class will the input arguments from 
+	 * the command line (already parsed by the SignificanceAnalyzer class)
+	 * 
+	 * @param arg_map					map of the arguments. Run SignificanceAnalyzer with -h option for more details 
+	 * @param log						universal log file
+	 * @throws IllegalInputException
+	 */
 	public Combiner(HashMap<String, Object> arg_map, Log log) throws IllegalInputException {
 		
 		this.log = log;
 		
-		chr = (Integer) arg_map.get("chr");
+		chr = (Integer) arg_map.get("chromosome_num");
 		wrk_dir = (File) arg_map.get("wrk_dir");
 		
 		stats_dir = new File(wrk_dir.getAbsolutePath() + File.separator + "stats_files");
@@ -43,19 +57,31 @@ public class Combiner {
 		stat_str = new String[0];
 	}
 	
-	public void combineWindows(String str) throws Exception {
+	/**
+	 * Runs combination for the windows created in statistical calculation with a 
+	 * combination filter used to generate the specific list of stats desired.
+	 * 
+	 * @param combine_filter
+	 * @throws Exception
+	 */
+	public void combineWindows(String combine_filter) throws Exception {
 		
 		log.addLine("\tRunning Window Combiner");
 		System.out.println("\tRunning Window Combiner");
 		
-		stat_str = createStatString(str);
+		stat_str = createStatString(combine_filter);
 		
 		log.addLine("Reading in files");
 		System.out.println("Reading in files");
 		importData(false);
 	}
 	
-	//combines all of the stats
+	/**
+	 * Runs combination for the windows created in statistical calculation with a 
+	 * default filter used to generate the list of stats printed.
+	 * 
+	 * @throws FileParsingException
+	 */
 	public void combineWindows() throws FileParsingException {
 		
 		log.addLine("\nRunning Window Combiner");
@@ -68,6 +94,12 @@ public class Combiner {
 		
 	}
 	
+	/**
+	 * Runs combination for the windows created in statistical calculation with a 
+	 * default filter used to generate the list of stats printed. Filters incomplete data.
+	 * 
+	 * @throws FileParsingException
+	 */
 	public void combineAnalysisData() throws FileParsingException {
 		
 		log.addLine("\nRunning Window Combiner");
@@ -79,6 +111,11 @@ public class Combiner {
 		importData(true);
 	}
 	
+	/**
+	 * Writes out the statistical results of SelecT analysis
+	 * 
+	 * @throws FileParsingException
+	 */
 	public void writeStats() throws FileParsingException {
 		
 		System.out.println("Writing combined windows");
@@ -140,10 +177,6 @@ public class Combiner {
 		if (ssContains("f")) {
 			f = true;
 		}
-		//if(ssContains("t"))
-		//	t = true;
-		//if(ssContains("new"))
-		//	new = true;
 		if (ssContains("up")) {
 			up = true;
 		}

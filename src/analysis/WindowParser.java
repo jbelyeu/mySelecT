@@ -7,8 +7,14 @@ import java.util.List;
 import java.util.Scanner;
 
 import errors.FileParsingException;
-import tools.*;
+import tools.Log;
+import tools.SNP;
+import tools.WindowStats;
 
+/**
+ * Class to parse windows files created by threaded statistical calculations
+ *
+ */
 public class WindowParser {
 	
 	private File win_file;
@@ -17,6 +23,14 @@ public class WindowParser {
 	
 	private Log log;
 	
+	/**
+	 * Creates window parser instance
+	 * 
+	 * @param log		universal log file
+	 * @param win_file	file of window to be parsed
+	 * @param st_pos	starting position for parsing
+	 * @param end_pos	stop position for parsing
+	 */
 	public WindowParser(Log log, File win_file, int st_pos, int end_pos) {
 		
 		this.log = log;
@@ -25,9 +39,16 @@ public class WindowParser {
 		ws = new WindowStats(st_pos, end_pos);
 	}
 	
-	public WindowStats parseWindow(boolean filter) throws FileParsingException {
+	/**
+	 * Runs either the generic parser or the analysis parse
+	 * 
+	 * @param use_analysis_parser		filter to chose either generic or analysis parser. True for analysis parser.  
+	 * @return
+	 * @throws FileParsingException
+	 */
+	public WindowStats parseWindow(boolean use_analysis_parser) throws FileParsingException {
 		
-		if (filter) {
+		if (use_analysis_parser) {
 			return runAnalysisParse();
 		}
 		else {

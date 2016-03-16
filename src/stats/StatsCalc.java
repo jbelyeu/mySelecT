@@ -9,29 +9,39 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 
+import calc.Fst;
+import calc.HaplotypeTests;
+import calc.XPEHH;
+import calc.dDAF;
+import calc.iHH;
+import calc.iHS;
+import errors.StatsCalcException;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
 import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import net.sourceforge.argparse4j.internal.HelpScreenException;
-import calc.*;
-import errors.IllegalInputException;
-import errors.StatsCalcException;
-import tools.*;
+import tools.GeneticMap;
+import tools.Individual;
+import tools.Log;
+import tools.SNP;
+import tools.SimDist;
+import tools.Window;
+import tools.WindowStats;
 
+/**
+ * 	Hyper-Parallelized Composite of Multiple Signals (CMS) Java implementation GWAS.
+ *	This program calculated the stats that are used in CMS analysis
+ *	@author Hayden Smith
+ */
 public class StatsCalc {
 
-	/** Hyper-Parallelized Composite of Multiple Signals (CMS) Java implementation GWAS and Local study version 1.0
-	 * This program calculated the stats that are used in CMS analysis
-	 * @author Hayden Smith
+	/**
+	 * Entry point. Run with -h option for details of the arguments
+	 * Parses arguments, instantiates the StatsCalc class,
+	 * and starts calculations.
 	 * 
-	 * @param args	Required	SelecT workspace
-	 * @param args	Required	Simulations directory
-	 * @param args	Required	Chromosome number
-	 * @param args	Required	Window number
-	 * @param args	Optional	iHS absolute value probability (--ihs_abs flag)
-	 * @param args	Optional	DAF cutoff (--daf_cutoff flag; default is 0.2)
-	 * @param args	Optional	Prior Probability (--prior_prob flag; default without flag is number of SNPs in window)
+	 * @param args
 	 */
 	public static void main(String[] args) {
 		
@@ -84,9 +94,9 @@ public class StatsCalc {
 						+ "associated with selection (same as CMS_local). If not included, "
 						+ "large positive AND negative iHS scores equate to greater selection");
 		
-		//na: deflt_prior = true | # of snps in window as prior; prior_prob doesn't matter
-		//--prior_prob: deflt_prior = false, prior_prob = 0.0001 | not dynamic, use prior of 1/10000, these are Broad's parameters
-		//--prior_prob X: deflt_prior = false, prior_prob = X | completely custom prior probability
+		//na: default_prior = true | # of snps in window as prior; prior_prob doesn't matter
+		//--prior_prob: default_prior = false, prior_prob = 0.0001 | not dynamic, use prior of 1/10000, these are Broad's parameters
+		//--prior_prob X: default_prior = false, prior_prob = X | completely custom prior probability
 		parser.addArgument("-pp", "--prior_prob").nargs("?").setConst(0.0001).setDefault(-1.0)
 				.type(Double.class).choices(Arguments.range(0.0, 1.0))
 				.help("Sets the prior probability for bayesian score probability analysis. "
@@ -182,7 +192,7 @@ public class StatsCalc {
 	private File sim_dir;
 	
 	//Analysis options
-	private boolean deflt_prior;
+	private boolean default_prior;
 	private boolean ihs_abs;
 	private double daf_cutoff;
 	private double prior_prob;
@@ -196,6 +206,12 @@ public class StatsCalc {
 	
 	private static Log log;
 	
+	/**
+	 * Sets up the stat calculation. Reads in and sets arguments.
+	 * 
+	 * @param argMap	hashmap of the arguments to be used
+	 * @param log		universal log file
+	 */
 	public StatsCalc(HashMap<String, Object> argMap, Log log) {
 		
 		tp_win = null;
@@ -206,6 +222,9 @@ public class StatsCalc {
 		setArgs(argMap);
 	}
 	
+	/**
+	 * Runs the statistical calculations
+	 */
 	public void runStats() {
 		
 		setupFiles();
@@ -439,23 +458,23 @@ public class StatsCalc {
 			//Instantiate Selection Tests
 			i = new iHS(tp_win, tp_indv, anc_types, tp_wins, gm, 
 					neut_sim_arr[SimDist.IHS_TYPE], sel_sim_arr[SimDist.IHS_TYPE],
-					ihs_abs, deflt_prior, prior_prob);
+					ihs_abs, default_prior, prior_prob);
 			
 			h = new iHH(tp_win, tp_indv, anc_types, tp_wins, gm, 
 					neut_sim_arr[SimDist.IHH_TYPE], sel_sim_arr[SimDist.IHH_TYPE],
-					deflt_prior, prior_prob);
+					default_prior, prior_prob);
 			
 			x = new XPEHH(txin_win, txin_wins, tp_inx_indv, xp_int_indv, gm, 
 					neut_sim_arr[SimDist.XPEHH_TYPE], sel_sim_arr[SimDist.XPEHH_TYPE],
-					deflt_prior, prior_prob);
+					default_prior, prior_prob);
 			
 			d = new dDAF(tp_win, tp_indv, xoin_wins, xp_ino_indv, op_inx_indv, anc_types, 
 					neut_sim_arr[SimDist.DDAF_TYPE], sel_sim_arr[SimDist.DDAF_TYPE],
-					deflt_prior, prior_prob);
+					default_prior, prior_prob);
 			
 			f = new Fst(txin_win, tp_inx_indv, xp_int_indv, op_inx_indv, 
 					neut_sim_arr[SimDist.FST_TYPE], sel_sim_arr[SimDist.FST_TYPE],
-					deflt_prior, prior_prob);
+					default_prior, prior_prob);
 			
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -539,8 +558,9 @@ public class StatsCalc {
 		}
 		
 		wrk_dir = new File(wrk_dir.getAbsolutePath() + File.separator + "stats_files");
-		if (!wrk_dir.exists())
+		if (!wrk_dir.exists()) {
 			wrk_dir.mkdirs();
+		}
 	}
 	
 	private void setArgs(HashMap<String, Object> args) {
@@ -555,10 +575,10 @@ public class StatsCalc {
 		
 		prior_prob = (Double) args.get("prior_prob");
 		if (prior_prob == -1.0) {
-			deflt_prior = true;
+			default_prior = true;
 		}
 		else {
-			deflt_prior = false;
+			default_prior = false;
 		}
 	}
 }
@@ -585,7 +605,8 @@ class StatsThread extends Thread {
 		
 		thrd = new Thread(this);
 	}
-	
+
+	@Override
 	public void start() {
 		thrd.start();
 	}
