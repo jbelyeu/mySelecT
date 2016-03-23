@@ -285,3 +285,4 @@ public class dDAF extends HaplotypeTests {
 		return null;
 	}
 }
+

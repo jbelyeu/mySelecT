@@ -36,8 +36,8 @@ public class SetupDriver {
 	//population declarations
 	private String t_pop;
 	private String x_pop;
-	private String o_pop;
-	private String s_name; //species name
+//	private String o_pop;
+//	private String s_name; //species name
 	
 	//directories and files for accessing and writing data
 	private String t_pop_file;
@@ -95,8 +95,10 @@ public class SetupDriver {
 	}
 	
 	/**
-	 * Runs the setup processes. Specifically, parses the input files using VcfParser instances,
-	 * uses PopIntersector to intersect the populations, then writes out the results into the workspace.
+	 * Runs the setup processes. Specifically, parses the input 
+	 * files using VcfParser instances, uses PopIntersector to 
+	 * intersect the populations, then writes out the results 
+	 * into the workspace.
 	 * 
 	 * @throws Exception
 	 */
@@ -472,8 +474,8 @@ public class SetupDriver {
         x_pop = (String)args.get("cross_pop_name");
         log.add(".");
 
-        o_pop = (String)args.get("out_pop_name");
-        log.add(".");
+//        o_pop = (String)args.get("out_pop_name");
+//        log.add(".");
         
         this.anc_data_loc = (String)args.get("anc_data_loc");
         log.add(".");
@@ -490,8 +492,8 @@ public class SetupDriver {
         map_file = ((File)args.get("map_file")).getAbsolutePath();
         log.add(".");
         
-        s_name = (String)args.get("species");
-        log.add(".");
+//        s_name = (String)args.get("species");
+//        log.add(".");
 
         chr_st = (Integer) args.get("start_chr");
         log.add(".");

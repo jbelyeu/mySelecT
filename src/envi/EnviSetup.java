@@ -17,22 +17,13 @@ import tools.Log;
 public class EnviSetup {
 
 	/**
-	 * It reads in the files and args provided, validates them (simple readability and logic checks), then
-	 * creates an instance of the SetupDriver class to generate the running environment. Outputs are written to a log.
+	 * This function reads in the files and args provided, validates them 
+	 * (simple readability and logic checks), then creates an 
+	 * instance of the SetupDriver class to generate the running 
+	 * environment. Outputs are written to a log. For more details 
+	 * about the arguments, run with -h option
 	 * 
-	 * @param Required	Phased target population input file in VCF format
-	 * @param Required	Phased cross population input file in VCF format
-	 * @param Required	Genetic Map input file
-	 * @param Required	Start chromosome number
-	 * @param Required	End chromosome number
-	 * @param Required	Species name
-	 * @param Required	Target Population
-	 * @param Required	Cross Population
-	 * 
-	 * @param Optional	Phased outgroup population input file in VCF format (-op flag, default is same as cross population)
-	 * @param Optional	Outgroup population name
-	 * @param Optional	Path for SelecT workspace (-wd flag, default is current directory)
-	 * @param Optional	Window Size in Mb (-ws flag; default is 0.5Mb)
+	 * @param args	command line arguments
 	 */
 	public static void main(String[] args) {
 		
@@ -104,7 +95,7 @@ public class EnviSetup {
 	        throw new IllegalInputException(log, msg);
 	    }
 	    
-	    //when the outgrop population file is set we should have the outgroup population name
+	    //when the outgroup population file is set we should have the outgroup population name
 	    if (parsedArgs.get("out_pop_name") == null
 	     && parsedArgs.get("out_pop_file") != null) {
 	    	String msg = "Out-group population file (-opf) option is set when the "
@@ -112,7 +103,7 @@ public class EnviSetup {
 	    	throw new IllegalInputException(log, msg);
 	    }
 	    
-	    //when the outgrop population name is set we should have the outgroup population file
+	    //when the outgroup population name is set we should have the outgroup population file
 	    if (parsedArgs.get("out_pop_name") != null
 	     && parsedArgs.get("out_pop_file") == null) {
 	    	String msg = "Out-group population file (-opf) option is NOT set when the "
@@ -157,15 +148,15 @@ public class EnviSetup {
 	    }
 	    
 	    //Check if species name is provided and of the correct format
-	    if (parsedArgs.get("species") == null) {
-	    	String msg = "Error: Species name is not provided. "
-	    				+ "Please add genus_species to the list of arguments";
-	    	throw new IllegalInputException(log, msg);
-	    } else if (!((String)parsedArgs.get("species")).matches("\\w+_\\w+")) {
-	    	String msg = "Error: Species name is of the wrong format. "
-	    				+ "The correct format should be: genus_species";
-	    	throw new IllegalInputException(log, msg);
-	    }
+//	    if (parsedArgs.get("species") == null) {
+//	    	String msg = "Error: Species name is not provided. "
+//	    				+ "Please add genus_species to the list of arguments";
+//	    	throw new IllegalInputException(log, msg);
+//	    } else if (!((String)parsedArgs.get("species")).matches("\\w+_\\w+")) {
+//	    	String msg = "Error: Species name is of the wrong format. "
+//	    				+ "The correct format should be: genus_species";
+//	    	throw new IllegalInputException(log, msg);
+//	    }
 	        
 	    log.addLine("Working Parameters");
 	    log.addLine("Target Population File:\t\t" + parsedArgs.get("target_pop_file"));
@@ -175,7 +166,7 @@ public class EnviSetup {
 		} 
 	    log.addLine("Genetic Map File:\t\t\t" + parsedArgs.get("map_file"));
 	    log.addLine("Envi Output Dir:\t\t\t" + parsedArgs.get("working_dir"));
-	    log.addLine("Species:\t\t\t\t\t" + parsedArgs.get("species")); // check to see if this works
+//	    log.addLine("Species:\t\t\t\t\t" + parsedArgs.get("species")); // check to see if this works
 	    log.addLine("Target Pop Name:\t\t\t" + parsedArgs.get("target_pop_name"));
 	    log.addLine("Cross Pop Name:\t\t\t\t" + parsedArgs.get("cross_pop_name"));
 	    log.addLine("Outgroup Pop Name:\t\t\t" + parsedArgs.get("out_pop_name"));
@@ -197,7 +188,7 @@ public class EnviSetup {
 			.type(Arguments.fileType().verifyIsFile().verifyCanRead())
 			.help("Target population input file");
 	
-		parser.addArgument("-cpf", "--cross_pop_file").required(true)
+		parser.addArgument("-xpf", "--cross_pop_file").required(true)
 			.type(Arguments.fileType().verifyIsFile().verifyCanRead())
 			.help("Cross population input file");
 		
@@ -209,20 +200,17 @@ public class EnviSetup {
 			.type(Arguments.fileType().verifyIsFile().verifyCanRead())
 			.help("Genetic map input file");
 		
-		//TODO: DONE Review the non-hardcoded number
 		parser.addArgument("-sc", "--start_chr").type(Integer.class).help("Starting chromosome number. "
 				+ "Must be equal to or greater than 1.");
 	
-		//TODO: DONE Review the non-hardcoded number
 		parser.addArgument("-ec", "--end_chr").required(true)
 			.type(Integer.class).help("Ending chromosome number. "
 			+ "Must be equal to or greater than starting chromosome number.");
 		
-		//TODO: DONE. Check to see if the species is passed correctly
-		parser.addArgument("-s", "--species").required(true).type(String.class)
-				.help("Species name has to match the following format: genus_species");
+//		Not currently used
+//		parser.addArgument("-s", "--species").required(true).type(String.class)
+//				.help("Species name has to match the following format: genus_species");
 		
-		//TODO: NOTE Population names can be omitted
 		//NOTE Might not need population names if given actual input files
 		parser.addArgument("-tpn", "--target_pop_name").required(true)
 			.type(String.class).help("Target population name");

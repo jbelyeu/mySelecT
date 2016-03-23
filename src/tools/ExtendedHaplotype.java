@@ -13,7 +13,6 @@ public class ExtendedHaplotype {
 	 * use a FIFO method for organizing information
 	 * 		use LinkedList .removeFirst()
 	 */
-	
 	private LinkedList<IDStrand> haplo;
 	
 	/**

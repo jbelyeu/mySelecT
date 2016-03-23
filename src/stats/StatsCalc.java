@@ -41,7 +41,7 @@ public class StatsCalc {
 	 * Parses arguments, instantiates the StatsCalc class,
 	 * and starts calculations.
 	 * 
-	 * @param args
+	 * @param args		Command line arguments
 	 */
 	public static void main(String[] args) {
 		
@@ -78,15 +78,18 @@ public class StatsCalc {
                 .description("Run evolution statistics and calculate composite scores");
 		
 		//Creating required arguments
-		parser.addArgument("wrk_dir").type(Arguments.fileType().verifyIsDirectory()
-                .verifyCanRead()).help("SelecT workspace directory (created in phase 1)");
+		parser.addArgument("-wd", "--wrk_dir").required(true).type(Arguments.fileType()
+				.verifyIsDirectory().verifyCanRead())
+				.help("SelecT workspace directory (created in phase 1)");
 		
-		parser.addArgument("sim_dir").type(Arguments.fileType().verifyIsDirectory()
-                .verifyCanRead()).help("Directory where simulations are saved");
-		//TODO: DONE. Review.
-		parser.addArgument("chr").type(Integer.class).help("Chromosome number. Must be equal to or greater than 1.");
+		parser.addArgument("-sd", "--sim_dir").required(true).type(Arguments.fileType()
+				.verifyIsDirectory().verifyCanRead()).help("Directory where simulations are saved");
+
+		parser.addArgument("-c", "--chr").required(true).type(Integer.class)
+					.help("Chromosome number. Must be equal to or greater than 1.");
 		
-		parser.addArgument("win_num").type(Integer.class).help("Window number for current analysis");
+		parser.addArgument("-wn", "--win_num").required(true).type(Integer.class)
+					.help("Window number for current analysis");
 		
 		//Creating optional arguments
 		parser.addArgument("-inon", "--nonabs_ihs").action(Arguments.storeFalse())	
@@ -217,7 +220,7 @@ public class StatsCalc {
 		tp_win = null;
 		ws = null;
 		
-		this.log = log;
+		StatsCalc.log = log;
 		
 		setArgs(argMap);
 	}

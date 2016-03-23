@@ -103,7 +103,6 @@ public class WindowStats implements Comparable<WindowStats>{
 		return all_snps.size();
 	}
 	
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////Ended here
 	public int getNextPosition(int prev_pos) {
 		
 		int nxt_pos = end_pos;

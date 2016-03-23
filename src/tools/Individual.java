@@ -5,8 +5,6 @@ import java.util.Arrays;
 
 /**
  * Stores information for individuals from the input data.
- * 
- *
  */
 @SuppressWarnings("serial")
 public class Individual implements Serializable {
@@ -34,7 +32,8 @@ public class Individual implements Serializable {
 	}
 	
 	/**
-	 * Constructor with arguments. Takes in the individual's ID and the chromosome number of interest.
+	 * Constructor with arguments. Takes in the individual's 
+	 * ID and the chromosome number of interest.
 	 * 
 	 * @param id		individual ID
 	 * @param chr		chromsosome number
@@ -48,7 +47,101 @@ public class Individual implements Serializable {
 		strand1 = new boolean[ARRAY_SIZE];
 		strand2 = new boolean[ARRAY_SIZE];
 	}
+	//**************************************************************************//
+	public boolean addAlleleToStrand1(String a) {
+		
+		boolean valid = true;
+		if (!isValidAllele(a)) {
+			valid = false;
+		}
+		
+		char allele = a.charAt(0);
+		
+		if ((strand1_index + 1) == strand1.length) {
+			strand1 = increaseSize(strand1);
+		}
+		
+		if (!valid) {
+			strand1[strand1_index] = false;
+		}
+		if (allele == '0') {
+			strand1[strand1_index] = false;
+		}
+		else if (allele == '1') {
+			strand1[strand1_index] = true;
+		}
+		
+		strand1_index++;
+		return valid;
+	}
 	
+	public boolean addAlleleToStrand2(String a) {
+		
+		boolean valid = true;
+		if (!isValidAllele(a)) {
+			valid = false;
+		}
+		
+		char allele = a.charAt(0);
+		
+		if((strand2_index + 1) == strand2.length) {
+			strand2 = increaseSize(strand2);
+		}
+		
+		if (!valid) {
+			strand2[strand2_index] = false;
+		}
+		else if (allele == '0') {
+			strand2[strand2_index] = false;
+		}
+		else if (allele == '1') {
+			strand2[strand2_index] = true;
+		}
+		
+		strand2_index++;
+		return valid;
+	}
+	
+	public void addAlleleToStrand1(boolean allele) {
+		
+		if ((strand1_index + 1) == strand1.length) {
+			strand1 = increaseSize(strand1);
+		}
+		
+		strand1[strand1_index] = allele;
+		strand1_index++;
+	}
+	
+	public void addAlleleToStrand2(boolean allele) {
+		
+		if ((strand2_index + 1) == strand2.length) {
+			strand2 = increaseSize(strand2);
+		}
+		
+		strand2[strand2_index] = allele;
+		strand2_index++;
+	}
+	
+
+	private boolean isValidAllele(String a) {
+	    
+        if (a.length() != 1) {
+            return false;
+        }
+    
+        char ch = a.charAt(0);
+        if (!Character.isDigit(ch)) {
+            return false;
+        }
+    
+        if (ch != '1' && ch != '0') {
+            return false;
+        }
+    
+        return true;
+    }   
+
+	//********************************************************************************//
 	/**
 	 * Checks validity of adding an allele to the specified strand
 	 * 
@@ -90,6 +183,15 @@ public class Individual implements Serializable {
 		}
 		
 		strand_index++;
+		
+		if (addToLeading) {
+			this.strand1 = strand;
+			this.strand1_index = strand_index;
+		}
+		else {
+			this.strand2 = strand;
+			this.strand2_index = strand_index;
+		}
 		return valid;
 	}
 	
@@ -119,6 +221,15 @@ public class Individual implements Serializable {
 		
 		strand[strand_index] = allele;
 		strand_index++;
+		
+		if (addToLeading) {
+			this.strand1 = strand;
+			this.strand1_index = strand_index;
+		}
+		else {
+			this.strand2 = strand;
+			this.strand2_index = strand_index;
+		}
 	}
 	
 	/**

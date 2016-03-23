@@ -8,7 +8,6 @@ import java.util.Scanner;
 import errors.StatsCalcException;
 import tools.SimDist;
 
-
 /**
  * Parses the simulation files
  *
@@ -33,6 +32,7 @@ public class SimulationParser {
 	
 	/**
 	 * Parses and returns the data for simulations of neutral selection
+	 * 
 	 * @return	the neutral simulations data
 	 * @throws StatsCalcException
 	 */

@@ -9,7 +9,7 @@ import tools.SNP;
 import tools.SimDist;
 import tools.Window;
 
-/*
+/**
  * Calculates the Fst (f-statistic) score as presented 
  * by Wiley and Cockerham (1984)
  */
@@ -368,3 +368,4 @@ public class Fst extends HaplotypeTests {
 		return instance;
 	}
 }
+

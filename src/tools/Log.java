@@ -7,8 +7,6 @@ import java.io.PrintWriter;
 
 /**
  * Log implementation, used for universal logging during execution and error logs.
- * 
- *
  */
 public class Log {
 	

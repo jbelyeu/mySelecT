@@ -34,7 +34,6 @@ public class SignificanceAnalyzer {
 	 * Entry point for significance analysis. Run with -h option for 
 	 * argument details.
 	 * 
-	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
@@ -199,7 +198,7 @@ public class SignificanceAnalyzer {
 	 */
 	public SignificanceAnalyzer(HashMap<String, Object> arg_map, List<WindowStats> all_window_stats, Log log) {
 		
-		this.log = log;
+		SignificanceAnalyzer.log = log;
 		this.all_window_stats = all_window_stats;
 		
 		sig_score = pToZ((Double) arg_map.get("p_value"));

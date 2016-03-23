@@ -30,7 +30,7 @@ public class PhasedParser {
 	private List<Integer> dups = new ArrayList<Integer>();
 	
 	private Log log;
-	
+
 	public PhasedParser() {
 		
 		lg_scan = null;
@@ -38,17 +38,10 @@ public class PhasedParser {
 		
 		log = null;
 	}
-	
-	/**
-	 * 
-	 * @param lg_path
-	 * @param ph_path
-	 * @param log
-	 * @throws FileParsingException
-	 */
+
 	public PhasedParser(String lg_path, String ph_path, Log log) throws FileParsingException {
 		
-		this.lg_path = lg_path;
+		this.lg_path = lg_path; 
 		this.ph_path = ph_path;
 		this.log = log;
 		
@@ -297,3 +290,4 @@ public class PhasedParser {
 		
 	}
 }
+

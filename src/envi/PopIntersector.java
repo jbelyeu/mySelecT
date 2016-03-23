@@ -265,19 +265,21 @@ public class PopIntersector {
 
 		//Adding alleles to p1 population's individuals
 		for (int m = 0; m < p1_indv_intersect.length; m++) {
+			//TODO: Causing death
 			Integer str_1 = p1_indv[m].getAlleleFromStrand(p1_indx, true);
 			Integer str_2 = p1_indv[m].getAlleleFromStrand(p1_indx, false);
 
 			p1_indv_intersect[m].addAlleleToStrand(str_1.toString().charAt(0), true);
 			p1_indv_intersect[m].addAlleleToStrand(str_2.toString().charAt(0), false);
+
 		}
 
 		//Adding alleles to p2 population's individuals
 		for (int i = 0; i < p2_indv_intersect.length; i++) {
 
 			Integer str_1 = p2_indv[i].getAlleleFromStrand(p2_indx, true);
-			Integer str_2 = p2_indv[i].getAlleleFromStrand(p2_indx, true);
-
+			Integer str_2 = p2_indv[i].getAlleleFromStrand(p2_indx, false);
+			
 			//switch allele types because they are reported on opposite a0 or a1 column
 			if (p1_snp.getAllele0().equals(p2_snp.getAllele1())) {
 
@@ -325,3 +327,4 @@ public class PopIntersector {
 	}
 	
 }
+

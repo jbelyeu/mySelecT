@@ -213,10 +213,7 @@ public class XPEHH extends HaplotypeTests {
 			System.out.println(all_XPEHH.get(i));
 		}
 	}
-	
-	/**
-	 * TODO: what is this?
-	 */
+
 	public void printRStats() {
 		
 		double mean  = findMean(all_XPEHH);
