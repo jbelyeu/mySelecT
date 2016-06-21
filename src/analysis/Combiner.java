@@ -296,7 +296,7 @@ public class Combiner {
 	private void addWindowFile(File win_file, boolean filter_incomplete_data) throws FileParsingException {
 		
 		if (win_file != null && win_file.exists() 
-				&& win_file.getName().charAt(0) != '.'
+					&& win_file.getName().charAt(0) != '.'
 				&& win_file.getName().contains("chr" + chr)
 				&& win_file.getName().contains("_s")
 				&& win_file.getName().contains("-e")) {
@@ -309,6 +309,10 @@ public class Combiner {
 			WindowParser wp = new WindowParser(log, win_file, st_pos, end_pos);
 			WindowStats ws = wp.parseWindow(filter_incomplete_data);
 			all_ws.add(ws);
+		}
+		else {
+			log.addLine("\nWARNING: Skipping invalid file " + win_file.getName() + 
+					". Please ensure that correct arguments were input for file location and chromosome number.");
 		}
 	}
 	

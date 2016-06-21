@@ -289,9 +289,21 @@ public class SignificanceAnalyzer {
 		
 		System.out.println("Running Normalization");
 		log.addLine("Running Normalization");
-		
-		WindowStats comb_ws = new WindowStats(all_stats.get(0).getStPos(), 
+		WindowStats comb_ws = null;
+		try {
+			comb_ws = new WindowStats(all_stats.get(0).getStPos(), 
 				all_stats.get(all_stats.size()-1).getEndPos());
+		}
+		catch (Exception e) {
+			System.out.println("SelecT Died Prematurely." 
+					+ " Check log output for troubleshooting.");
+			
+			log.addLine("\n\nSelecT Died Prematurely. Error in "
+					+ "importing files from statistical analysis.\n"
+					+ "Verify that the correct chromosome number was "
+					+ "used for all steps of analysis.");
+			e.printStackTrace();
+		}
 		
 		for (int i = 0; i < all_stats.size(); i++) {
 			
