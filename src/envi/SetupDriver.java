@@ -335,6 +335,13 @@ public class SetupDriver {
 		String xp_vcf_path = x_pop_file.toString();//getPhasedPath(data_dir, VCF_TYPE, chr, x_pop);
 		String op_vcf_path = o_pop_file.toString();//getPhasedPath(data_dir, VCF_TYPE, chr, o_pop);
 		
+		String identifier = "chr" + chr + "_";
+			
+		if (tp_vcf_path.contains(identifier)) {
+			log.addLine("WARNING: Filename " + tp_vcf_path + " does not contain expected identifier " + identifier + 
+					". Ensure that files are correct for the given chromosome range.");	
+		}
+		
 		String map_path = map_file.toString();//getMapPath(map_dir, chr);
 		
 		//=====Run Parsers and Save Data=======
